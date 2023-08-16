@@ -8,3 +8,11 @@ class Element:
 
     def __str__(self):
         return "{x_start: " + str(self.x_start) + " , y_spot: " + str(self.y_spot) + " , y_segment: " + str(self.y_segment) + " , slope: " + str(self.slope) + " , x_end: " + str(self.x_end) + "}"
+
+    def value_at(self, x):
+        if x == self.x_start:
+            return self.y_spot
+        elif self.x_start < x < self.x_end:
+            return (x - self.x_start) * self.slope + self.y_segment
+        else:
+            return None
