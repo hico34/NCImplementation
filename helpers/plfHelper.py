@@ -1,5 +1,4 @@
 import random
-from Element import Element
 from fractions import Fraction
 #from PiecewiseLinearFunction import PiecewiseLinearFunction
 

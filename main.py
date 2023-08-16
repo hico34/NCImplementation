@@ -1,8 +1,13 @@
-from PiecewiseLinearFunction import PiecewiseLinearFunction
-from MinimumMaximum import min_of_plfs
-from Element import Element
+import sys
+
+sys.path.insert(0, 'C:/Users/Philip/Documents/Retro/NCImplementation/model')
+sys.path.insert(0, 'C:/Users/Philip/Documents/Retro/NCImplementation/operations')
+sys.path.insert(0, 'C:/Users/Philip/Documents/Retro/NCImplementation/util')
+
+from model.PiecewiseLinearFunction import PiecewiseLinearFunction
+from model.Element import Element
 from fractions import Fraction
-from util import lcm_fraction as lcm
+from helpers.util import lcm_fraction as lcm
 import numpy as np2
 
 elementList = [

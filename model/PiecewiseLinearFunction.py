@@ -1,7 +1,7 @@
-
-from plfHelper import index_of_element_at
+from helpers.plfHelper import index_of_element_at
 import math
-from Element import Element
+from .Element import Element
+
 
 class PiecewiseLinearFunction:
     def __init__(self, elements, rank, period, increment):
@@ -41,7 +41,7 @@ class PiecewiseLinearFunction:
     def extend_and_get_all_elements(self, rank, period):
         if rank < self.rank or period % self.period != 0:
             print("Error at extend?")  # TODO
-        no_of_repeated_periods = round((rank + period - (self.rank + self.period)) / self.period)
+        no_of_repeated_periods = math.ceil((rank + period - (self.rank + self.period)) / self.period)
         result_elements = self.transient_elements + self.periodic_elements
         for i in range(no_of_repeated_periods):
             for e in self.periodic_elements:
@@ -113,6 +113,6 @@ class PiecewiseLinearFunction:
             condlist.append(x == e.x_start)
             funclist.append(e.y_spot)
             condlist.append(np.logical_and((e.x_start < x),(x < e.x_end)))
-            funclist.append(lambda x, e=e: e.value_at(x))
+            funclist.append(lambda x, e=e: e.numpy_value_at(x))
 
         return np.piecewise(x, condlist, funclist)

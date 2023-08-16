@@ -1,6 +1,7 @@
-from Element import Element
-from util import lcm_fraction as lcm
-from PiecewiseLinearFunction import PiecewiseLinearFunction
+from model.Element import Element
+from helpers.util import lcm_fraction as lcm
+from model.PiecewiseLinearFunction import PiecewiseLinearFunction
+from fractions import Fraction
 
 
 def min_of_plfs(f1, f2):
@@ -31,34 +32,34 @@ def min_of_plfs(f1, f2):
     while i < len(f1_elements) and j < len(f2_elements):
         f1_element = f1_elements[i]
         f2_element = f2_elements[j]
-        print(i, j, current_spot_x, f1_element, f2_element)
         y_spot = min(f1_element.value_at(current_spot_x), f2_element.value_at(current_spot_x))
         next_spot_x = min(f1_element.x_end, f2_element.x_end)
-        if f1_element.slope - f2_element.slope != 0:
+        if f1_element.slope != f2_element.slope:
             #TODO Prove Correctnes
             intersection_x = (f2_element.y_segment - f2_element.slope * f2_element.x_start - f1_element.y_segment + f1_element.slope*f1_element.x_start) / (f1_element.slope - f2_element.slope)
+
         else:
             intersection_x = -1
         if current_spot_x < intersection_x < next_spot_x:
-            # Lower Element refers to the element with the lower limit at x_start.
+            # Lower Element refers to the element with the lower limit at current_spot_x.
             # Min(f1, f2) in the currently analysed interval will then be lower_element up to the intersection,
             # and upper_element after
-            if f1_element.y_segment < f2_element.y_segment:
+            if f1_element.lim_value_at(current_spot_x) < f2_element.lim_value_at(current_spot_x):
                 lower_element = f1_element
                 upper_element = f2_element
             else:
                 lower_element = f2_element
                 upper_element = f1_element
-            result_elements.append(Element(current_spot_x, y_spot, lower_element.y_segment, intersection_x, lower_element.slope))
+            result_elements.append(Element(current_spot_x, y_spot, lower_element.lim_value_at(current_spot_x), intersection_x, lower_element.slope))
             intersection_y = f1_element.value_at(intersection_x)
             result_elements.append(
-                Element(intersection_x, intersection_y, upper_element.y_segment, next_spot_x, upper_element.slope))
-        elif f1_element.y_segment < f2_element.y_segment or (f1_element.y_segment == f2_element.y_segment and f1_element.slope < f2_element.slope):
+                Element(intersection_x, intersection_y, intersection_y, next_spot_x, upper_element.slope))
+        elif f1_element.lim_value_at(current_spot_x) < f2_element.lim_value_at(current_spot_x) or (f1_element.lim_value_at(current_spot_x) == f2_element.lim_value_at(current_spot_x) and f1_element.slope < f2_element.slope):
             result_elements.append(
-                Element(current_spot_x, y_spot, f1_element.y_segment, next_spot_x, f1_element.slope))
+                Element(current_spot_x, y_spot, f1_element.lim_value_at(current_spot_x), next_spot_x, f1_element.slope))
         else:
             result_elements.append(
-                Element(current_spot_x, y_spot, f2_element.y_segment, next_spot_x, f2_element.slope))
+                Element(current_spot_x, y_spot, f2_element.lim_value_at(current_spot_x), next_spot_x, f2_element.slope))
 
         if f1_element.x_end < f2_element.x_end:
             i = i + 1
@@ -68,5 +69,4 @@ def min_of_plfs(f1, f2):
             i = i + 1
             j = j + 1
         current_spot_x = next_spot_x
-        print(len(f1_elements), len(f2_elements), i, j, i < len(f1_elements) - 1 and i < len(f2_elements) - 1)
     return PiecewiseLinearFunction(result_elements, rank, period, increment)
