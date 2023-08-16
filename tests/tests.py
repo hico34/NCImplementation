@@ -47,9 +47,7 @@ class Test(unittest.TestCase):
             x_values = x_values_f1 + x_values_f2 + x_values_g
             x_values = list(dict.fromkeys(x_values))
 
-            computed_values = []
-            for x in x_values:
-                computed_values.append(g.value_at(x))
+
 
             numpy_x_values = np.array(x_values)
             numpy_values_f1 = f1.numpy_values_at(numpy_x_values)
@@ -57,6 +55,13 @@ class Test(unittest.TestCase):
             expected_values = []
             for i in range(len(x_values)):
                 expected_values.append(numpy_values_f1[i] + numpy_values_f2[i])
+
+            computed_values = []
+            errors = []
+            for i in range(len(x_values)):
+                computed_values.append(g.value_at(x_values[i]))
+                if(computed_values[i] != expected_values[i]):
+                    errors.append((i, x_values[i], computed_values[i], expected_values[i]))
 
             computed_values = np.array(computed_values)
             t = np.setdiff1d(computed_values, expected_values)

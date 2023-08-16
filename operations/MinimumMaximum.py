@@ -55,6 +55,7 @@ def min_of_plfs(f1, f2):
             result_elements.append(
                 Element(intersection_x, intersection_y, intersection_y, next_spot_x, upper_element.slope))
         elif f1_element.lim_value_at(current_spot_x) < f2_element.lim_value_at(current_spot_x) or (f1_element.lim_value_at(current_spot_x) == f2_element.lim_value_at(current_spot_x) and f1_element.slope < f2_element.slope):
+            # TODO Avoid unnecessary elements
             result_elements.append(
                 Element(current_spot_x, y_spot, f1_element.lim_value_at(current_spot_x), next_spot_x, f1_element.slope))
         else:
