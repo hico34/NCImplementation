@@ -47,25 +47,15 @@ class Test(unittest.TestCase):
             x_values = x_values_f1 + x_values_f2 + x_values_g
             x_values = list(dict.fromkeys(x_values))
 
-
-
             numpy_x_values = np.array(x_values)
             numpy_values_f1 = f1.numpy_values_at(numpy_x_values)
             numpy_values_f2 = f2.numpy_values_at(numpy_x_values)
             expected_values = []
+            computed_values = []
             for i in range(len(x_values)):
                 expected_values.append(numpy_values_f1[i] + numpy_values_f2[i])
-
-            computed_values = []
-            errors = []
-            for i in range(len(x_values)):
                 computed_values.append(g.value_at(x_values[i]))
-                if(computed_values[i] != expected_values[i]):
-                    errors.append((i, x_values[i], computed_values[i], expected_values[i]))
 
-            computed_values = np.array(computed_values)
-            t = np.setdiff1d(computed_values, expected_values)
-            t1 = np.setdiff1d(expected_values, computed_values)
             self.assertTrue(np.array_equal(computed_values, expected_values))
 
     def test_minimum(self):
@@ -81,28 +71,16 @@ class Test(unittest.TestCase):
             x_values = x_values_f1 + x_values_f2 + x_values_g
             x_values = list(dict.fromkeys(x_values))
 
-
-
             numpy_x_values = np.array(x_values)
             numpy_periodic_x_values = np.array(periodic_x_values)
             numpy_values_f1 = f1.numpy_values_at(numpy_x_values)
             numpy_values_f2 = f2.numpy_values_at(numpy_x_values)
             expected_values = []
+            computed_values = []
             for i in range(len(x_values)):
                 expected_values.append(min(numpy_values_f1[i], numpy_values_f2[i]))
-            computed_values = []
-            errors = []
-            for i in range(len(x_values)):
                 computed_values.append(g.value_at(x_values[i]))
-                if(computed_values[i] != expected_values[i]):
-                    errors.append((i, x_values[i], computed_values[i], expected_values[i]))
-            computed_values = np.array(computed_values)
-            t = np.setdiff1d(computed_values, expected_values)
-            t1 = np.setdiff1d(expected_values, computed_values)
-            t2 = f1.value_at(x_values[39])
-            t3 = f2.value_at(x_values[39])
-            t4 = min(t2, t3)
-            t5 = g.value_at(x_values[39])
+
             self.assertTrue(np.array_equal(computed_values, expected_values))
 
 if __name__ == '__main__':

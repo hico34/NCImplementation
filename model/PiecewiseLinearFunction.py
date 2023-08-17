@@ -99,9 +99,12 @@ class PiecewiseLinearFunction:
         if last_index is None:
             last_index = len(elements) - 1
         last_element = elements[last_index]
-        last_element_cut = Element(last_element.x_start, last_element.y_spot, last_element.y_segment, end_x,
-                                   last_element.slope)
-        return elements[0:last_index] + [last_element_cut]
+        if last_element.x_start == end_x:
+            return elements[0:last_index]
+        else:
+            last_element_cut = Element(last_element.x_start, last_element.y_spot, last_element.y_segment, end_x,
+                                       last_element.slope)
+            return elements[0:last_index] + [last_element_cut]
 
     def numpy_values_at(self, np_array):
         import numpy as np
