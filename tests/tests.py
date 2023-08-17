@@ -8,7 +8,7 @@ import itertools
 class Test(unittest.TestCase):
 
     def test_value_at(self):
-        functions = [testHelpers.uppFunction1, testHelpers.uppFunction2, testHelpers.continousFunction1, testHelpers.continousFunction2]
+        functions = testHelpers.test_functions
         for f in functions:
             with self.subTest(f=f):
                 x_values, periodic_x_values = testHelpers.relevant_x_values(f)
@@ -35,7 +35,7 @@ class Test(unittest.TestCase):
                 self.assertTrue(np.array_equal(computed_periodic_values, expected_periodic_values))
 
     def test_addition(self):
-        functions = [testHelpers.uppFunction1, testHelpers.uppFunction2, testHelpers.continousFunction1, testHelpers.continousFunction2]
+        functions = testHelpers.test_functions
         function_tuples = itertools.permutations(functions, 2)
         for tuple in function_tuples:
             f1, f2 = tuple
@@ -47,19 +47,21 @@ class Test(unittest.TestCase):
             x_values = x_values_f1 + x_values_f2 + x_values_g
             x_values = list(dict.fromkeys(x_values))
 
-            numpy_x_values = np.array(x_values)
-            numpy_values_f1 = f1.numpy_values_at(numpy_x_values)
-            numpy_values_f2 = f2.numpy_values_at(numpy_x_values)
             expected_values = []
             computed_values = []
+            # TODO Remove
+            errors = []
             for i in range(len(x_values)):
-                expected_values.append(numpy_values_f1[i] + numpy_values_f2[i])
+                expected_values.append(f1.value_at(x_values[i]) + f2.value_at(x_values[i]))
                 computed_values.append(g.value_at(x_values[i]))
+                if(expected_values[i] != computed_values [i]):
+                    errors.append((i, x_values[i], expected_values[i], computed_values[i]))
+                    print(f1.value_at(x_values[i]), f2.value_at(x_values[i]), f1.value_at(x_values[i]) + f2.value_at(x_values[i]), g.value_at(x_values[i]))
 
             self.assertTrue(np.array_equal(computed_values, expected_values))
 
     def test_minimum(self):
-        functions = [testHelpers.uppFunction1, testHelpers.uppFunction2, testHelpers.continousFunction1, testHelpers.continousFunction2]
+        functions = testHelpers.test_functions
         function_tuples = itertools.permutations(functions, 2)
         for tuple in function_tuples:
             f1, f2 = tuple
@@ -71,14 +73,10 @@ class Test(unittest.TestCase):
             x_values = x_values_f1 + x_values_f2 + x_values_g
             x_values = list(dict.fromkeys(x_values))
 
-            numpy_x_values = np.array(x_values)
-            numpy_periodic_x_values = np.array(periodic_x_values)
-            numpy_values_f1 = f1.numpy_values_at(numpy_x_values)
-            numpy_values_f2 = f2.numpy_values_at(numpy_x_values)
             expected_values = []
             computed_values = []
             for i in range(len(x_values)):
-                expected_values.append(min(numpy_values_f1[i], numpy_values_f2[i]))
+                expected_values.append(min(f1.value_at(x_values[i]), f2.value_at(x_values[i])))
                 computed_values.append(g.value_at(x_values[i]))
 
             self.assertTrue(np.array_equal(computed_values, expected_values))

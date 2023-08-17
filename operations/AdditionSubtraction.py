@@ -5,7 +5,7 @@ from helpers.plfHelper import index_of_element_at
 from model.Element import Element
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 
-def add_plfs(f1, f2):
+def add_plfs(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     if f1.rank > f2.rank:
         rank = f1.rank
     else:
@@ -34,7 +34,7 @@ def add_plfs(f1, f2):
         result_elements.append(Element(x_start, y_spot, y_segment, x_end, slope))
     return PiecewiseLinearFunction(result_elements, rank, period, increment)
 
-def subtract_plfs(f1, f2):
+def subtract_plfs(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     if f1.rank > f2.rank:
         rank = f1.rank
     else:

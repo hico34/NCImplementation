@@ -24,6 +24,9 @@ class PiecewiseLinearFunction:
                 return self.transient_elements[i].y_segment + (x - self.transient_elements[i].x_start) * \
                        self.transient_elements[i].slope
         else:
+            if self.is_ultimately_affine():
+                e = self.periodic_elements[0]
+                return (x - e.x_start) * e.slope + e.y_segment
             no_of_periods = math.floor((x - (self.rank + self.period)) / self.period + 1)
             if no_of_periods < 0:
                 no_of_periods = 0
@@ -41,6 +44,10 @@ class PiecewiseLinearFunction:
     def extend_and_get_all_elements(self, rank, period):
         if rank < self.rank or period % self.period != 0:
             print("Error at extend?")  # TODO
+        if self.is_ultimately_affine():
+            e = self.periodic_elements[0]
+            extended_element = Element(e.x_start, e.y_spot, e.y_segment, rank + period, e.slope)
+            return self.transient_elements + [extended_element]
         no_of_repeated_periods = math.ceil((rank + period - (self.rank + self.period)) / self.period)
         result_elements = self.transient_elements + self.periodic_elements
         for i in range(no_of_repeated_periods):
@@ -105,6 +112,9 @@ class PiecewiseLinearFunction:
             last_element_cut = Element(last_element.x_start, last_element.y_spot, last_element.y_segment, end_x,
                                        last_element.slope)
             return elements[0:last_index] + [last_element_cut]
+
+    def is_ultimately_affine(self):
+        return len(self.periodic_elements) == 1
 
     def numpy_values_at(self, np_array):
         import numpy as np
