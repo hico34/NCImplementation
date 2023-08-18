@@ -1,6 +1,8 @@
 import numpy as np
+from .Spot import Spot
+from .Segment import Segment
 
-class Element:
+class Piece:
     def __init__(self, x_start, y_spot, y_segment, x_end, slope):
         self.x_start = x_start
         self.y_spot = y_spot
@@ -28,8 +30,14 @@ class Element:
         else:
             return self.value_at(x)
 
+    def decompose(self):
+        spot = Spot(self.x_start, self.y_spot)
+        segment = Segment(self.x_start, self.y_segment, self.x_end, self.slope)
+        return spot, segment
+
     def numpy_value_at(self, list):
         values = np.array([])
         for x in list:
             values = np.append(values, [self.value_at(x)])
         return values
+

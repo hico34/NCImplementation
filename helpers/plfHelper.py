@@ -1,11 +1,12 @@
 import random
 from fractions import Fraction
+from model.Piece import Piece
 #from PiecewiseLinearFunction import PiecewiseLinearFunction
 
-def index_of_element_at(elements, x):
+def index_of_piece_at(pieces: [Piece], x):
     # TODO Binary Search
-    for i in range(len(elements)):
-        if elements[i].x_start <= x < elements[i].x_end:
+    for i in range(len(pieces)):
+        if pieces[i].x_start <= x < pieces[i].x_end:
             return i
     return None
 
@@ -34,7 +35,7 @@ def index_of_element_at(elements, x):
 #     increment = (elements[len(elements)-1].y_segment + elements[len(elements)-1].slope * elements[len(elements)-1].x_end) - elements[-no_of_period_segments].y_spot
 #     return PiecewiseLinearFunction(elements, rank, period, increment)
 
-def merge_element_lists(l1, l2):
+def merge_piece_lists(l1, l2):
     mergedList = []
 
 def randomFraction(a, b):
