@@ -87,8 +87,10 @@ def segment_convolution(s1: Segment, s2: Segment):
     return return_segment_1, return_segment_2
 
 def min_of_elements(elements: list):
-    elements.sort(key=lambda e: e.x_start)
+    elements.sort(key=lambda e: (e.x_start, isinstance(e, Segment)))
     element_collections = []
     current_bag_x = elements[0].x_start
     for e in elements:
         print()
+
+    
