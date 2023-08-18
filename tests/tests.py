@@ -1,6 +1,6 @@
 import unittest
 from operations.AdditionSubtraction import add_plfs
-from operations.MinimumMaximum import min_of_plfs
+from operations.Minimum import min_of_plfs
 import numpy as np
 import tests.testHelpers as testHelpers
 import itertools
@@ -11,7 +11,7 @@ class Test(unittest.TestCase):
         functions = testHelpers.test_functions
         for f in functions:
             with self.subTest(f=f):
-                x_values, periodic_x_values = testHelpers.relevant_x_values(f)
+                x_values, periodic_part_x_values = testHelpers.relevant_x_values(f)
 
                 computed_values = []
                 for x in x_values:
@@ -24,8 +24,10 @@ class Test(unittest.TestCase):
 
                 computed_periodic_values = []
                 no_of_periods = 10
-                for i in range(1, no_of_periods):
-                    periodic_x_values = periodic_x_values + [x+f.period for x in periodic_x_values]
+                periodic_x_values = []
+                for i in range(no_of_periods):
+                    l = [x+f.period * i for x in periodic_part_x_values]
+                    periodic_x_values = periodic_x_values + l
                 for x in periodic_x_values:
                     computed_periodic_values.append(f.value_at(x))
 

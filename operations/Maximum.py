@@ -1,67 +1,41 @@
-from model.Piece import Piece
 from helpers.util import lcm_fraction as lcm
+from helpers.util import decompose, compose, append_segment
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
-from fractions import Fraction
 from model.Element import Element
 from model.Spot import Spot
-from model.Segment import Segment
 
-def min_of_plfs(f1, f2):
+
+def max_of_plfs(f1, f2):
     #Precompute rank
-    if f1.periodic_slope < f2.periodic_slope:
+    if f1.periodic_slope > f2.periodic_slope:
         period = f1.period
         increment = f1.increment
-        M1 = f1.sup_deviation_from_periodic_slope()
-        m2 = f2.inf_deviation_from_periodic_slope()
-        rank = max((M1-m2)/(f2.periodic_slope - f1.periodic_slope), f1.rank, f2.rank)
-    elif f2.periodic_slope < f1.periodic_slope:
-        period = f2.period
-        increment = f2.increment
         M1 = f2.sup_deviation_from_periodic_slope()
         m2 = f1.inf_deviation_from_periodic_slope()
         rank = max((M1-m2)/(f1.periodic_slope - f2.periodic_slope), f1.rank, f2.rank)
+    elif f2.periodic_slope > f1.periodic_slope:
+        period = f2.period
+        increment = f2.increment
+        M1 = f1.sup_deviation_from_periodic_slope()
+        m2 = f2.inf_deviation_from_periodic_slope()
+        rank = max((M1-m2)/(f2.periodic_slope - f1.periodic_slope), f1.rank, f2.rank)
     else:
         period = lcm(f1.period, f2.period)
         increment = lcm(f1.increment, f2.increment) * f1.periodic_slope
         rank = max(f1.rank, f2.rank)
+
     f1_pieces = f1.extend_and_get_all_pieces(rank, period)
     f2_pieces = f2.extend_and_get_all_pieces(rank, period)
-
-
-    # Decompose
-    f1_elements = []
-    for p in f1_pieces:
-        spot, segment = p.decompose()
-        f1_elements.append(spot)
-        f1_elements.append(segment)
-    f2_elements = []
-    for p in f2_pieces:
-        spot, segment = p.decompose()
-        f2_elements.append(spot)
-        f2_elements.append(segment)
-
-    result_elements = min_of_elements(f1_elements, f2_elements)
-
-    # Compose
-    result_pieces = []
-    spot = None
-    segment = None
-    for e in result_elements:
-        if e.is_spot:
-            spot = e
-        if e.is_segment:
-            segment = e
-        if (spot is not None) and (segment is not None):
-            piece = Piece(spot.x_start, spot.y, segment.y_segment, segment.x_end, segment.slope)
-            result_pieces.append(piece)
-            spot = None
-            segment = None
+    f1_elements = decompose(f1_pieces)
+    f2_elements = decompose(f2_pieces)
+    result_elements = max_of_elements(f1_elements, f2_elements)
+    result_pieces = compose(result_elements)
 
     return PiecewiseLinearFunction(result_pieces, rank, period, increment)
 
 # Requires lists sorted by x_start, and spots < segments if both start at the same value
 # Elements in the same list may not overlap
-def min_of_elements(e1: [Element], e2: [Element]):
+def max_of_elements(e1: [Element], e2: [Element]):
     result = []
     iter1 = iter(e1)
     iter2 = iter(e2)
@@ -127,21 +101,21 @@ def min_of_elements(e1: [Element], e2: [Element]):
 
         # Two spots
         if current_e1.is_spot and current_e2.is_spot:
-            result.append(Spot(current_e1.x_start, min(current_e1.y, current_e2.y)))
+            result.append(Spot(current_e1.x_start, max(current_e1.y, current_e2.y)))
             current_e1 = next_e1()
             current_e2 = next_e2()
             continue
 
         # One segment, one spot
         if current_e1.is_spot and current_e2.is_segment:
-            # If the spot is not part of the lower envelope, we can disregard it and continue with next iteration
-            if current_e2.value_at(current_e1.x_start) <= current_e1.y:
+            # If the spot is not part of the upper envelope, we can disregard it and continue with next iteration
+            if current_e2.value_at(current_e1.x_start) >= current_e1.y:
                 current_e1 = next_e1()
                 continue
 
             # Split segment at spot, keep the right part for the next iteration
             left_segment, right_segment = current_e2.split_at(current_e1.x_start)
-            spot = Spot(current_e1.x_start, min(current_e1.y, current_e2.value_at(current_e1.x_start)))
+            spot = Spot(current_e1.x_start, max(current_e1.y, current_e2.value_at(current_e1.x_start)))
             result.append(left_segment)
             result.append(spot)
             current_e1 = next_e1()
@@ -149,14 +123,14 @@ def min_of_elements(e1: [Element], e2: [Element]):
             continue
 
         elif current_e2.is_spot and current_e1.is_segment:
-            # If the spot is not part of the lower envelope, we can disregard it and continue with next iteration
+            # If the spot is not part of the upper envelope, we can disregard it and continue with next iteration
             if current_e1.value_at(current_e2.x_start) <= current_e2.y:
                 current_e2 = next_e2()
                 continue
 
             # Split segment at spot, keep the right part for the next iteration
             left_segment, right_segment = current_e1.split_at(current_e2.x_start)
-            spot = Spot(current_e2.x_start, min(current_e2.y, current_e1.value_at(current_e1.x_start)))
+            spot = Spot(current_e2.x_start, max(current_e2.y, current_e1.value_at(current_e1.x_start)))
             result.append(left_segment)
             result.append(spot)
             current_e1 = right_segment
@@ -195,14 +169,12 @@ def min_of_elements(e1: [Element], e2: [Element]):
         else:
             intersection_x = None
 
-        # Determine lower segment at time of overlap_start
+        # Determine upper segment at time of overlap_start
         if current_e1.lim_value_at(overlap_start) < current_e2.lim_value_at(overlap_start) or (current_e1.lim_value_at(overlap_start) == current_e2.lim_value_at(overlap_start) and current_e1.slope < current_e2.slope):
             lower = 1
             lower_e = current_e1
-            lower_iter = iter1
             upper = 2
             upper_e = current_e2
-            upper_iter = iter2
         else:
             lower = 2
             lower_e = current_e2
@@ -214,7 +186,7 @@ def min_of_elements(e1: [Element], e2: [Element]):
             left_lower, right_lower = lower_e.split_at(intersection_x)
             spot = Spot(intersection_x, intersection_y)
             left_upper, right_upper = upper_e.split_at(intersection_x)
-            append_segment(result, left_lower)
+            append_segment(result, left_upper)
             result.append(spot)
             if lower == 1:
                 current_e1 = right_lower
@@ -225,15 +197,15 @@ def min_of_elements(e1: [Element], e2: [Element]):
             continue
 
         if lower_e.x_end == upper_e.x_end:
-            append_segment(result, lower_e)
+            append_segment(result, upper_e)
             current_e1 = next_e1()
             current_e2 = next_e2()
 
         # Split longer segment, keep right part. Handle shorter segment
         if lower_e.x_end < upper_e.x_end:
-            _, upper_right = upper_e.split_at(lower_e.x_end)
+            upper_left, upper_right = upper_e.split_at(lower_e.x_end)
             spot = Spot(lower_e.x_end, upper_e.value_at(lower_e.x_end))
-            append_segment(result, lower_e)
+            append_segment(result, upper_left)
             # Since the next element might be defined on the support of the spot,
             # we need to consider the spot in the next iteration and keep upper_right for later
             if lower == 1:
@@ -247,9 +219,9 @@ def min_of_elements(e1: [Element], e2: [Element]):
             continue
 
         if upper_e.x_end < lower_e.x_end:
-            lower_left, lower_right = lower_e.split_at(upper_e.x_end)
+            _, lower_right = lower_e.split_at(upper_e.x_end)
             spot = Spot(upper_e.x_end, lower_e.value_at(upper_e.x_end))
-            append_segment(result, lower_left)
+            append_segment(result, upper_e)
             # Since the next element might be defined on the support of the spot,
             # we need to consider the spot in the next iteration and keep lower_right for later
             if upper == 1:
@@ -263,30 +235,3 @@ def min_of_elements(e1: [Element], e2: [Element]):
             continue
 
     return result
-
-
-# TODO move to helper, mention
-
-# If possible, merge segments to avoid unnecessary elements
-def append_segment(list: [Element], segment: Segment):
-    if len(list) >= 2:
-        last_el = list[-1]
-        second_to_last_el = list[-2]
-    else:
-        list.append(segment)
-        return
-
-    if not (last_el.is_spot and second_to_last_el.is_segment):
-        list.append(segment)
-        return
-
-    is_continous = second_to_last_el.lim_value_at(last_el.x_start) == last_el.y
-    is_continous = is_continous and second_to_last_el.x_end == last_el.x_start
-    is_continous = is_continous and last_el.y == segment.lim_value_at(last_el.x_start)
-    is_continous = is_continous and last_el.x_end == segment.x_start
-    if is_continous and second_to_last_el.slope == segment.slope:
-        merged_segment = Segment(second_to_last_el.x_start, second_to_last_el.y_segment, segment.x_end, segment.slope)
-        list.pop()
-        list[-1] = merged_segment
-    else:
-        list.append(segment)

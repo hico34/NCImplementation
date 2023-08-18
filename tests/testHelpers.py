@@ -18,10 +18,10 @@ def relevant_x_values(f: PiecewiseLinearFunction):
 
 
 
-rank_continous1 = Fraction(9.5)
-period_continous1 = Fraction(3.25)
-increment_continous1 = Fraction(5.75)
-pieces_continous1 = [
+rank_continuous1 = Fraction(9.5)
+period_continuous1 = Fraction(3.25)
+increment_continuous1 = Fraction(5.75)
+pieces_continuous1 = [
     Piece(Fraction(0), Fraction(0), Fraction(0), Fraction(3), Fraction(.5)),
     Piece(Fraction(3), Fraction(1.5), Fraction(1.5), Fraction(5), Fraction(1)),
     Piece(Fraction(5), Fraction(3.5), Fraction(3.5), Fraction(8), Fraction(4)),
@@ -29,10 +29,10 @@ pieces_continous1 = [
     Piece(Fraction(9.5), Fraction(16.625), Fraction(16.625), Fraction(12), Fraction(2)),
     Piece(Fraction(12), Fraction(21.625), Fraction(21.625), Fraction(12.75), Fraction(1))
 ]
-rank_continous2 = Fraction(11)
-period_continous2 = Fraction(10)
-increment_continous2 = Fraction(112, 5)
-pieces_continous2 = [
+rank_continuous2 = Fraction(11)
+period_continuous2 = Fraction(10)
+increment_continuous2 = Fraction(112, 5)
+pieces_continuous2 = [
     Piece(Fraction(0), Fraction(1), Fraction(1), Fraction(2), Fraction(2)),
     Piece(Fraction(2), Fraction(4), Fraction(4), Fraction(7), Fraction(1.5)),
     Piece(Fraction(7), Fraction(11.5), Fraction(11.5), Fraction(10), Fraction(0.1)),
@@ -110,8 +110,8 @@ concaveFunction1 = PiecewiseLinearFunction(pieces_concave1, rank_concave1, perio
 concaveFunction2 = PiecewiseLinearFunction(pieces_concave2, rank_concave2, period_concave2, increment_concave2)
 convexFunction1 = PiecewiseLinearFunction(pieces_convex1, rank_convex1, period_convex1, increment_convex1)
 convexFunction2 = PiecewiseLinearFunction(pieces_convex2, rank_convex2, period_convex2, increment_convex2)
-continousFunction1 = PiecewiseLinearFunction(pieces_continous1, rank_continous1, period_continous1, increment_continous1)
-continousFunction2 = PiecewiseLinearFunction(pieces_continous2, rank_continous2, period_continous2, increment_continous2)
+continuousFunction1 = PiecewiseLinearFunction(pieces_continuous1, rank_continuous1, period_continuous1, increment_continuous1)
+continuousFunction2 = PiecewiseLinearFunction(pieces_continuous2, rank_continuous2, period_continuous2, increment_continuous2)
 finiteFunction1 = None
 finiteFunction2 = None
 ultimatelyAffineFunction1 = None
@@ -119,6 +119,6 @@ ultimatelyAffineFunction2 = None
 uppFunction1 = PiecewiseLinearFunction(pieces_upp1, rank_upp1, period_upp1, increment_upp1)
 uppFunction2 = PiecewiseLinearFunction(pieces_upp2, rank_upp2, period_upp2, increment_upp2)
 
-test_functions = [concaveFunction1, concaveFunction2, convexFunction1, convexFunction2, continousFunction1, continousFunction2, uppFunction1, uppFunction2]
+test_functions = [concaveFunction1, concaveFunction2, convexFunction1, convexFunction2, continuousFunction1, continuousFunction2, uppFunction1, uppFunction2]
 
 

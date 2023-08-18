@@ -9,7 +9,7 @@ class PiecewiseLinearFunction:
             self.transient_pieces, self.periodic_pieces = self.split_pieces(pieces, rank, period)
         else:
             self.transient_pieces = pieces
-        self.all_pieces = pieces
+        self.all_pieces = self.transient_pieces + self.periodic_pieces
         self.rank = rank
         self.period = period
         self.increment = increment
@@ -43,7 +43,7 @@ class PiecewiseLinearFunction:
 
     #TODO Replace Usages
     def extend_and_get_all_pieces(self, rank, period):
-        if rank < self.rank or period % self.period != 0:
+        if rank < self.rank:
             print("Error at extend?")  # TODO
         if self.is_ultimately_affine():
             e = self.periodic_pieces[0]
@@ -115,7 +115,7 @@ class PiecewiseLinearFunction:
             return pieces[0:last_index] + [last_piece_cut]
 
     def is_ultimately_affine(self):
-        return len(self.periodic_pieces) == 1
+        return len(self.periodic_pieces) == 1 and self.periodic_pieces[0].y_spot == self.periodic_pieces[0].y_segment
 
     def numpy_values_at(self, np_array):
         import numpy as np

@@ -11,14 +11,14 @@ def index_of_piece_at(pieces: [Piece], x):
     return None
 
 
-# def generate_plf(no_of_elements, max_interval_size, max_slope_size, max_y_segment_size, continous):
+# def generate_plf(no_of_elements, max_interval_size, max_slope_size, max_y_segment_size, continuous):
 #     random.seed(14334)
 #     elements = []
 #     next_x_start = Fraction(0)
 #     next_y_segment = Fraction(0)
 #     no_of_period_segments = random.randint(0, 20)
 #     for i in range(no_of_elements):
-#         if continous:
+#         if continuous:
 #             y_segment = next_y_segment
 #             y_spot = next_y_segment
 #         else:
