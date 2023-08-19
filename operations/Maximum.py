@@ -1,5 +1,5 @@
 from helpers.util import lcm_fraction as lcm
-from helpers.util import decompose, compose, append_segment
+from helpers.util import decompose, compose, append
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 from model.Element import Element
 from model.Spot import Spot
@@ -68,8 +68,12 @@ def max_of_elements(e1: [Element], e2: [Element]):
     while not ((current_e1 is None) and (current_e2 is None)):
         if current_e1 is None:
             result.append(current_e2)
+            current_e2 = next_e2()
+            continue
         if current_e2 is None:
             result.append(current_e1)
+            current_e1 = next_e1()
+            continue
 
         # No overlap
         if current_e1.x_end < current_e2.x_start:
@@ -80,24 +84,14 @@ def max_of_elements(e1: [Element], e2: [Element]):
             result.append(current_e2)
             current_e2 = next_e2()
             continue
-        elif current_e1.is_spot and current_e2.is_segment:
-            if current_e1.x_start == current_e2.x_start:
-                result.append(current_e1)
-                current_e1 = next_e1()
-                continue
-            elif current_e1.x_start == current_e2.x_end:
-                result.append(current_e2)
-                current_e2 = next_e2()
-                continue
-        elif current_e2.is_spot and current_e1.is_segment:
-            if current_e2.x_start == current_e1.x_start:
-                result.append(current_e2)
-                current_e2 = next_e2()
-                continue
-            elif current_e2.x_start == current_e1.x_end:
-                result.append(current_e1)
-                current_e1 = next_e1()
-                continue
+        elif current_e1.is_segment and current_e1.x_end == current_e2.x_start:
+            result.append(current_e1)
+            current_e1 = next_e1()
+            continue
+        elif current_e2.is_segment and current_e2.x_end == current_e1.x_start:
+            result.append(current_e2)
+            current_e2 = next_e2()
+            continue
 
         # Two spots
         if current_e1.is_spot and current_e2.is_spot:
@@ -143,14 +137,14 @@ def max_of_elements(e1: [Element], e2: [Element]):
         if current_e1.x_start < current_e2.x_start:
             left_segment, right_segment = current_e1.split_at(current_e2.x_start)
             spot = Spot(current_e2.x_start, current_e1.value_at(current_e2.x_start))
-            append_segment(result, left_segment)
+            append(result, left_segment)
             result.append(spot)
             current_e1 = right_segment
             continue
         elif current_e2.x_start < current_e1.x_start:
             left_segment, right_segment = current_e2.split_at(current_e1.x_start)
             spot = Spot(current_e1.x_start, current_e2.value_at(current_e1.x_start))
-            append_segment(result, left_segment)
+            append(result, left_segment)
             result.append(spot)
             current_e2 = right_segment
             continue
@@ -186,7 +180,7 @@ def max_of_elements(e1: [Element], e2: [Element]):
             left_lower, right_lower = lower_e.split_at(intersection_x)
             spot = Spot(intersection_x, intersection_y)
             left_upper, right_upper = upper_e.split_at(intersection_x)
-            append_segment(result, left_upper)
+            append(result, left_upper)
             result.append(spot)
             if lower == 1:
                 current_e1 = right_lower
@@ -197,15 +191,16 @@ def max_of_elements(e1: [Element], e2: [Element]):
             continue
 
         if lower_e.x_end == upper_e.x_end:
-            append_segment(result, upper_e)
+            append(result, upper_e)
             current_e1 = next_e1()
             current_e2 = next_e2()
+            continue
 
         # Split longer segment, keep right part. Handle shorter segment
         if lower_e.x_end < upper_e.x_end:
             upper_left, upper_right = upper_e.split_at(lower_e.x_end)
             spot = Spot(lower_e.x_end, upper_e.value_at(lower_e.x_end))
-            append_segment(result, upper_left)
+            append(result, upper_left)
             # Since the next element might be defined on the support of the spot,
             # we need to consider the spot in the next iteration and keep upper_right for later
             if lower == 1:
@@ -221,7 +216,7 @@ def max_of_elements(e1: [Element], e2: [Element]):
         if upper_e.x_end < lower_e.x_end:
             _, lower_right = lower_e.split_at(upper_e.x_end)
             spot = Spot(upper_e.x_end, lower_e.value_at(upper_e.x_end))
-            append_segment(result, upper_e)
+            append(result, upper_e)
             # Since the next element might be defined on the support of the spot,
             # we need to consider the spot in the next iteration and keep lower_right for later
             if upper == 1:

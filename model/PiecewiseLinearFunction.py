@@ -45,6 +45,8 @@ class PiecewiseLinearFunction:
     def extend_and_get_all_pieces(self, rank, period):
         if rank < self.rank:
             print("Error at extend?")  # TODO
+        if self.rank is None:
+            return self.transient_pieces
         if self.is_ultimately_affine():
             e = self.periodic_pieces[0]
             extended_piece = Piece(e.x_start, e.y_spot, e.y_segment, rank + period, e.slope)

@@ -1,8 +1,9 @@
 from helpers.util import lcm_fraction as lcm
-from helpers.util import decompose, compose, append_segment
+from helpers.util import decompose, compose, append
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 from model.Element import Element
 from model.Spot import Spot
+from typing import List
 
 
 def min_of_plfs(f1, f2):
@@ -35,7 +36,7 @@ def min_of_plfs(f1, f2):
 
 # Requires lists sorted by x_start, and spots < segments if both start at the same value
 # Elements in the same list may not overlap
-def min_of_elements(e1: [Element], e2: [Element]):
+def min_of_elements(e1: List[Element], e2: List[Element]):
     result = []
     iter1 = iter(e1)
     iter2 = iter(e2)
@@ -67,41 +68,45 @@ def min_of_elements(e1: [Element], e2: [Element]):
 
     while not ((current_e1 is None) and (current_e2 is None)):
         if current_e1 is None:
-            result.append(current_e2)
+            append(result, current_e2)
+            current_e2 = next_e2()
+            continue
         if current_e2 is None:
-            result.append(current_e1)
+            append(result, current_e1)
+            current_e1 = next_e1()
+            continue
 
         # No overlap
         if current_e1.x_end < current_e2.x_start:
-            result.append(current_e1)
+            append(result, current_e1)
             current_e1 = next_e1()
             continue
         elif current_e2.x_end < current_e1.x_start:
-            result.append(current_e2)
+            append(result, current_e2)
             current_e2 = next_e2()
             continue
-        elif current_e1.is_spot and current_e2.is_segment:
-            if current_e1.x_start == current_e2.x_start:
-                result.append(current_e1)
+        elif current_e1.is_segment:
+            if current_e1.x_end == current_e2.x_start:
+                append(result, current_e1)
                 current_e1 = next_e1()
                 continue
             elif current_e1.x_start == current_e2.x_end:
-                result.append(current_e2)
+                append(result, current_e2)
                 current_e2 = next_e2()
                 continue
-        elif current_e2.is_spot and current_e1.is_segment:
-            if current_e2.x_start == current_e1.x_start:
-                result.append(current_e2)
+        elif current_e2.is_segment:
+            if current_e2.x_end == current_e1.x_start:
+                append(result, current_e2)
                 current_e2 = next_e2()
                 continue
             elif current_e2.x_start == current_e1.x_end:
-                result.append(current_e1)
+                append(result, current_e1)
                 current_e1 = next_e1()
                 continue
 
         # Two spots
         if current_e1.is_spot and current_e2.is_spot:
-            result.append(Spot(current_e1.x_start, min(current_e1.y, current_e2.y)))
+            append(result, Spot(current_e1.x_start, min(current_e1.y, current_e2.y)))
             current_e1 = next_e1()
             current_e2 = next_e2()
             continue
@@ -116,8 +121,8 @@ def min_of_elements(e1: [Element], e2: [Element]):
             # Split segment at spot, keep the right part for the next iteration
             left_segment, right_segment = current_e2.split_at(current_e1.x_start)
             spot = Spot(current_e1.x_start, min(current_e1.y, current_e2.value_at(current_e1.x_start)))
-            result.append(left_segment)
-            result.append(spot)
+            append(result, left_segment)
+            append(result, spot)
             current_e1 = next_e1()
             current_e2 = right_segment
             continue
@@ -131,8 +136,8 @@ def min_of_elements(e1: [Element], e2: [Element]):
             # Split segment at spot, keep the right part for the next iteration
             left_segment, right_segment = current_e1.split_at(current_e2.x_start)
             spot = Spot(current_e2.x_start, min(current_e2.y, current_e1.value_at(current_e1.x_start)))
-            result.append(left_segment)
-            result.append(spot)
+            append(result, left_segment)
+            append(result, spot)
             current_e1 = right_segment
             current_e2 = next_e2()
             continue
@@ -143,15 +148,15 @@ def min_of_elements(e1: [Element], e2: [Element]):
         if current_e1.x_start < current_e2.x_start:
             left_segment, right_segment = current_e1.split_at(current_e2.x_start)
             spot = Spot(current_e2.x_start, current_e1.value_at(current_e2.x_start))
-            append_segment(result, left_segment)
-            result.append(spot)
+            append(result, left_segment)
+            append(result, spot)
             current_e1 = right_segment
             continue
         elif current_e2.x_start < current_e1.x_start:
             left_segment, right_segment = current_e2.split_at(current_e1.x_start)
             spot = Spot(current_e1.x_start, current_e2.value_at(current_e1.x_start))
-            append_segment(result, left_segment)
-            result.append(spot)
+            append(result, left_segment)
+            append(result, spot)
             current_e2 = right_segment
             continue
 
@@ -186,8 +191,8 @@ def min_of_elements(e1: [Element], e2: [Element]):
             left_lower, right_lower = lower_e.split_at(intersection_x)
             spot = Spot(intersection_x, intersection_y)
             left_upper, right_upper = upper_e.split_at(intersection_x)
-            append_segment(result, left_lower)
-            result.append(spot)
+            append(result, left_lower)
+            append(result, spot)
             if lower == 1:
                 current_e1 = right_lower
                 current_e2 = right_upper
@@ -197,15 +202,16 @@ def min_of_elements(e1: [Element], e2: [Element]):
             continue
 
         if lower_e.x_end == upper_e.x_end:
-            append_segment(result, lower_e)
+            append(result, lower_e)
             current_e1 = next_e1()
             current_e2 = next_e2()
+            continue
 
         # Split longer segment, keep right part. Handle shorter segment
         if lower_e.x_end < upper_e.x_end:
             _, upper_right = upper_e.split_at(lower_e.x_end)
             spot = Spot(lower_e.x_end, upper_e.value_at(lower_e.x_end))
-            append_segment(result, lower_e)
+            append(result, lower_e)
             # Since the next element might be defined on the support of the spot,
             # we need to consider the spot in the next iteration and keep upper_right for later
             if lower == 1:
@@ -221,7 +227,7 @@ def min_of_elements(e1: [Element], e2: [Element]):
         if upper_e.x_end < lower_e.x_end:
             lower_left, lower_right = lower_e.split_at(upper_e.x_end)
             spot = Spot(upper_e.x_end, lower_e.value_at(upper_e.x_end))
-            append_segment(result, lower_left)
+            append(result, lower_left)
             # Since the next element might be defined on the support of the spot,
             # we need to consider the spot in the next iteration and keep lower_right for later
             if upper == 1:
@@ -235,5 +241,18 @@ def min_of_elements(e1: [Element], e2: [Element]):
             continue
 
     return result
+
+# Divide and conquer approach to computing the minimum of a set of unsorted elements
+# Expects a list of lists of elements (containing a single Element when not calling recursively)
+def min_of_unsorted_elements(elements: List[List[Element]]):
+    if len(elements) == 1:
+        return elements[0]
+    elif len(elements) == 2:
+        return min_of_elements(elements[0], elements[1])
+    else:
+        split_i = len(elements) // 2
+        left = min_of_unsorted_elements(elements[:split_i])
+        right = min_of_unsorted_elements(elements[split_i:])
+        return min_of_elements(left, right)
 
 
