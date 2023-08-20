@@ -1,7 +1,6 @@
 from helpers.util import lcm_fraction as lcm
-from helpers.util import decompose, cut_off, compose
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
-from model.Piece import Piece
+from model.Element import Element
 from model.Spot import Spot
 from model.Segment import Segment
 from operations.Minimum import min_of_unsorted_elements, min_of_elements, min_of_plfs
@@ -20,6 +19,7 @@ def convolution(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     return g
 
 
+# Convolution of transient parts of two functions
 def transient_convolution(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     decomposed_f1, _ = f1.decompose()
     decomposed_f2, _ = f2.decompose()
@@ -27,49 +27,41 @@ def transient_convolution(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFuncti
     for e1 in decomposed_f1:
         for e2 in decomposed_f2:
             convolutions = convolutions + element_convolution(e1, e2)
-    result = min_of_unsorted_elements(convolutions)
-    return PiecewiseLinearFunction(compose(result), None, None, None)
+    lower_envelope = min_of_unsorted_elements(convolutions)
+    return PiecewiseLinearFunction.from_elements(lower_envelope, None, None, None)
 
 
-def periodic_convolution(f1, f2, period, increment):
-    periodic_index = len(f1.transient_pieces)
-    f_periodic_extended = f1.extend_and_get_all_pieces(f1.rank, f1.rank + 2 * period)
-    f1_periodic_pieces = f_periodic_extended[periodic_index:]
-    periodic_index = len(f2.transient_pieces)
-    f_periodic_extended = f2.extend_and_get_all_pieces(f2.rank, f2.rank + 2 * period)
-    f2_periodic_pieces = f_periodic_extended[periodic_index:]
-    decomposed_f1 = decompose(f1_periodic_pieces)
-    decomposed_f2 = decompose(f2_periodic_pieces)
+# Convolution of periodic parts of two functions
+def periodic_convolution(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction, period, increment):
+    _, f1_elements = f1.extend(f1.rank + f1.rank + 2 * period).decompose()
+    _, f2_elements = f2.extend(f2.rank + f2.rank + 2 * period).decompose()
+
     convolutions = []
-    for e1 in decomposed_f1:
-        for e2 in decomposed_f2:
+    for e1 in f1_elements:
+        for e2 in f2_elements:
             convolutions = convolutions + element_convolution(e1, e2)
 
-    elements = min_of_unsorted_elements(convolutions)
-    pieces = compose(elements)
+    lower_envelope = min_of_unsorted_elements(convolutions)
 
-    return PiecewiseLinearFunction(pieces, f1.rank + f2.rank + period, period, increment)
+    return PiecewiseLinearFunction.from_elements(lower_envelope, f1.rank + f2.rank + period, period, increment)
 
 
+# Convolution of transient part of one, and periodic part of another function
 def transient_periodic_convolution(f_transient: PiecewiseLinearFunction, f_periodic: PiecewiseLinearFunction):
-    decomposed_f1, _ = f_transient.decompose()
-    periodic_index = len(f_periodic.transient_pieces)
-    f_periodic_extended = f_periodic.extend_and_get_all_pieces(f_periodic.rank + f_transient.rank, f_periodic.period)
-    f_periodic_pieces = f_periodic_extended[periodic_index:]
+    _, decomposed_f_periodic = f_periodic.extend(f_periodic.rank + f_transient.rank + f_periodic.period).decompose()
     decomposed_f_transient, _ = f_transient.decompose()
-    decomposed_f_periodic = decompose(f_periodic_pieces)
+
     convolutions = []
     for e1 in decomposed_f_transient:
         for e2 in decomposed_f_periodic:
             convolutions = convolutions + element_convolution(e1, e2)
 
-    elements = min_of_unsorted_elements(convolutions)
-    pieces = compose(elements)
+    lower_envelope = min_of_unsorted_elements(convolutions)
 
-    return PiecewiseLinearFunction(pieces, f_transient.rank + f_periodic.rank, f_periodic.period, f_periodic.increment)
+    return PiecewiseLinearFunction.from_elements(lower_envelope, f_transient.rank + f_periodic.rank, f_periodic.period, f_periodic.increment)
 
 
-def element_convolution(e1, e2):
+def element_convolution(e1: Element, e2: Element):
     if isinstance(e1, Spot):
         if isinstance(e2, Spot):
             return [[spot_convolution(e1, e2)]]
@@ -102,7 +94,7 @@ def segment_convolution(s1: Segment, s2: Segment):
     x_split = lower.x_end + upper.x_start
     y_split = lower.lim_value_at(lower.x_end) + upper.y_segment
     x_end = lower.x_end + upper.x_end
-    return_segment_1 = Segment(x_start, y_split, x_split, lower.slope)
+    left_segment = Segment(x_start, y_split, x_split, lower.slope)
     spot = Spot(x_split, y_split)
-    return_segment_2 = Segment(x_split, y_split, x_end, upper.slope)
-    return return_segment_1, spot, return_segment_2
+    right_segment = Segment(x_split, y_split, x_end, upper.slope)
+    return left_segment, spot, right_segment

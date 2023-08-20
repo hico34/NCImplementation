@@ -8,7 +8,7 @@ from fractions import Fraction
 
 
 def min_of_plfs(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
-    #Precompute rank
+    # Precompute rank
     if not f1.is_ultimately_periodic():
         if f2.is_ultimately_periodic():
             period = f2.period
@@ -27,8 +27,6 @@ def min_of_plfs(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
         m2 = f2.inf_deviation_from_periodic_slope()
         rank = max((M1-m2)/(f2.periodic_slope - f1.periodic_slope), f1.rank, f2.rank)
     elif f2.periodic_slope < f1.periodic_slope:
-        if f1.periodic_slope == Fraction(3/4):
-            t = None
         period = f2.period
         increment = f2.increment
         M1 = f2.sup_deviation_from_periodic_slope()
@@ -39,14 +37,13 @@ def min_of_plfs(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
         increment = lcm(f1.period, f2.period) * f1.periodic_slope
         rank = max(f1.rank, f2.rank)
 
-    t, p = f1.extend(rank, period).decompose()
+    t, p = f1.extend(rank + period).decompose()
     f1_elements = t + p
-    t, p = f2.extend(rank, period).decompose()
+    t, p = f2.extend(rank + period).decompose()
     f2_elements = t + p
     result_elements = min_of_elements(f1_elements, f2_elements)
-    result_pieces = compose(result_elements)
 
-    return PiecewiseLinearFunction(result_pieces, rank, period, increment)
+    return PiecewiseLinearFunction.from_elements(result_elements, rank, period, increment)
 
 # Requires lists sorted by x_start, and spots < segments if both start at the same value
 # Elements in the same list may not overlap

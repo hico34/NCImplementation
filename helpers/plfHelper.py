@@ -3,6 +3,7 @@ from fractions import Fraction
 from model.Piece import Piece
 #from PiecewiseLinearFunction import PiecewiseLinearFunction
 
+# TODO Remove
 def index_of_piece_at(pieces: [Piece], x):
     # TODO Binary Search
     for i in range(len(pieces)):

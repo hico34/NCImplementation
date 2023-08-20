@@ -13,7 +13,8 @@ def lcm_fraction(fr1, fr2):
     den = gcd(fr1.denominator, fr2.denominator)
     return Fraction(num, den)
 
-
+# TODO Delete?
+# Find the greatest common divisor of 2 fractions
 def gcd_fraction(fr1, fr2):
     num = gcd(fr1.numerator, fr2.numerator)
     den = lcm(fr1.denominator, fr2.denominator)
@@ -28,7 +29,7 @@ def decompose(pieces: [Piece]):
         decomposed_list.append(segment)
     return decomposed_list
 
-# TODO Auslagern
+# TODO Delete
 def compose(elements):
     result_pieces = []
     spot = None
@@ -71,25 +72,4 @@ def append(list: [Element], e: Element):
         list[-1] = merged_segment
     else:
         list.append(e)
-
-def cut_off(elements, end_x):
-    # TODO Auslagern, Binary Search
-    last_index = None
-    for i in range(len(elements)):
-        if elements[i].is_segment and elements[i].x_start <= end_x < elements[i].x_end:
-            last_index = i
-            break
-        elif elements[i].is_spot and elements[i].x_start == end_x:
-            last_index = i
-            break
-
-
-    if last_index is None:
-        last_index = len(elements) - 1
-    last_piece = elements[last_index]
-    if last_piece.x_start == end_x:
-        return elements[0:last_index]
-    else:
-        last_piece_cut = Segment(last_piece.x_start, last_piece.y_segment, end_x, last_piece.slope)
-        return elements[0:last_index] + [last_piece_cut]
 

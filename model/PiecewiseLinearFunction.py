@@ -51,7 +51,7 @@ class PiecewiseLinearFunction:
                         self.periodic_pieces[i].slope
             return value + total_increment
 
-    #TODO Replace Usages
+    #TODO Delete
     def extend_and_get_all_pieces(self, rank, period):
         if rank < self.rank:
             print("Error at extend?")  # TODO
@@ -70,44 +70,28 @@ class PiecewiseLinearFunction:
                                              e.slope))
         return self.cut_off(result_pieces, rank + period)
 
-
-    def extend(self, rank, period):
+    # Extends the periodic part up to the target_x
+    def extend(self, target_x: Fraction):
         if not self.is_ultimately_periodic():
             return PiecewiseLinearFunction(self.all_pieces, None, None, None)
-        increment = period / self.period * self.increment
-        if self.is_ultimately_affine():
-            e = self.periodic_pieces[0]
-            extended_piece = Piece(e.x_start, e.y_spot, e.y_segment, rank + period, e.slope)
-            return PiecewiseLinearFunction(self.transient_pieces + [extended_piece], rank, period, increment)
-        no_of_repeated_periods = math.ceil((rank + period - (self.rank + self.period)) / self.period)
-        result_pieces = self.transient_pieces + self.periodic_pieces
-        for i in range(no_of_repeated_periods):
-            for e in self.periodic_pieces:
-                result_pieces.append(Piece(e.x_start + self.period * (i + 1), e.y_spot + self.increment * (i + 1),
-                                           e.y_segment + self.increment * (i + 1), e.x_end + self.period * (i + 1),
-                                           e.slope))
-        return PiecewiseLinearFunction(result_pieces, rank, period, increment)
 
-    def extended_decomposed_period(self, target_x):
-        if not self.is_ultimately_periodic():
-            return []
+        period = target_x - self.rank
+        increment = period / self.period * self.increment
+
         if self.is_ultimately_affine():
             e = self.periodic_pieces[0]
             extended_piece = Piece(e.x_start, e.y_spot, e.y_segment, target_x, e.slope)
-            return extended_piece.decompose()
+            return PiecewiseLinearFunction(self.transient_pieces + [extended_piece], self.rank, period, increment)
+
         no_of_repeated_periods = math.ceil((target_x - (self.rank + self.period)) / self.period)
-        result_pieces = self.transient_pieces + self.periodic_pieces
+        result_pieces = self.all_pieces
         for i in range(no_of_repeated_periods):
             for e in self.periodic_pieces:
                 result_pieces.append(Piece(e.x_start + self.period * (i + 1), e.y_spot + self.increment * (i + 1),
                                            e.y_segment + self.increment * (i + 1), e.x_end + self.period * (i + 1),
                                            e.slope))
-        result_elements = []
-        for p in result_pieces:
-            spot, segment = p.decompose()
-            result_elements.append(spot)
-            result_elements.append(segment)
-        return result_elements
+        return PiecewiseLinearFunction(result_pieces, self.rank, period, increment)
+
     def decompose(self):
         decomposed_transient = []
         for e in self.transient_pieces:
@@ -121,16 +105,16 @@ class PiecewiseLinearFunction:
             decomposed_periodic.append(segment)
         return decomposed_transient, decomposed_periodic
 
-    # Computes the supremum of deviations from the average slope of the periodic part (increment/period)
+    # Computes the supremum of deviations from the average slope of the periodic part
     def sup_deviation_from_periodic_slope(self):
-        sup = 0
+        sup = -math.inf
         for e in self.periodic_pieces:
             sup = max(sup, e.y_spot - self.periodic_slope * e.x_start) #TODO Correct?
             sup = max(sup, e.y_segment - self.periodic_slope * e.x_start)
             sup = max(sup, e.lim_value_at(e.x_end) - self.periodic_slope * e.x_end)
         return sup
 
-    # Computes the infimum of deviations from the average slope of the periodic part (increment/period)
+    # Computes the infimum of deviations from the average slope of the periodic part
     def inf_deviation_from_periodic_slope(self):
         inf = float("inf")
         for e in self.periodic_pieces:
@@ -183,9 +167,17 @@ class PiecewiseLinearFunction:
     def is_ultimately_periodic(self):
         return len(self.periodic_pieces) > 0
 
+    def is_convex(self):
+        # TODO Implement
+        return None
+
+    def is_concave(self):
+        # TODO Implement
+        return None
+
     def numpy_values_at(self, np_array):
         import numpy as np
-        pieces = self.extend_and_get_all_pieces(np_array[np_array.size - 1] + self.period, 0)
+        pieces = self.extend(np_array[np_array.size - 1] + self.period).all_pieces
         condlist = []
         funclist = []
         x = np_array
@@ -196,6 +188,23 @@ class PiecewiseLinearFunction:
             funclist.append(lambda x, e=e: e.numpy_value_at(x))
 
         return np.piecewise(x, condlist, funclist)
+
+    @staticmethod
+    def from_elements(elements, rank, period, increment):
+        pieces = []
+        spot = None
+        segment = None
+        for e in elements:
+            if e.is_spot:
+                spot = e
+            if e.is_segment:
+                segment = e
+            if (spot is not None) and (segment is not None):
+                piece = Piece(spot.x_start, spot.y, segment.y_segment, segment.x_end, segment.slope)
+                pieces.append(piece)
+                spot = None
+                segment = None
+        return PiecewiseLinearFunction(pieces, rank, period, increment)
 
     #TODO Remove
     def gg(self):

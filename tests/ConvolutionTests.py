@@ -25,11 +25,11 @@ class ConvolutionTests(unittest.TestCase):
 
     def test_convolution(self):
         f1 = testHelpers.uppFunction1
-        f2 = testHelpers.uppFunction2
+        f2 = testHelpers.concaveFunction1
         g = convolution(f1, f2)
-        print(f1.gg())
-        print(f2.gg())
-        print(g.gg())
+        print("var f1 = " + f1.gg())
+        print("var f2 = " + f2.gg())
+        print("var g = " + g.gg())
     @unittest.skip
     def test_2(self):
         period = lcm(self.f1.period, self.f2.period)

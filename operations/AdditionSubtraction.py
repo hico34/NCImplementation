@@ -13,8 +13,8 @@ def add_plfs(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     period = lcm(f1.period, f2.period)
     increment = (f1.increment / f1.period + f2.increment / f2.period) * period
 
-    f1_extended_pieces = f1.extend_and_get_all_pieces(rank, period)
-    f2_extended_pieces = f2.extend_and_get_all_pieces(rank, period)
+    f1_extended_pieces = f1.extend(rank + period).all_pieces
+    f2_extended_pieces = f2.extend(rank + period).all_pieces
     f1_extended_spots = list(map(lambda el: el.x_start, f1_extended_pieces))
     f2_extended_spots = list(map(lambda el: el.x_start, f2_extended_pieces))
     merged_spots = list(OrderedDict.fromkeys(merge(f1_extended_spots, f2_extended_spots))) ##TODO own merge
