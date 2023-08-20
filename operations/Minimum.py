@@ -4,17 +4,31 @@ from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 from model.Element import Element
 from model.Spot import Spot
 from typing import List
+from fractions import Fraction
 
 
-def min_of_plfs(f1, f2):
+def min_of_plfs(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     #Precompute rank
-    if f1.periodic_slope < f2.periodic_slope:
+    if not f1.is_ultimately_periodic():
+        if f2.is_ultimately_periodic():
+            period = f2.period
+            increment = f2.increment
+            rank = max(f1.rank, f2.rank)
+        else:
+            period = increment = rank = None
+    elif not f2.is_ultimately_periodic():
+        period = f1.period
+        increment = f1.increment
+        rank = max(f1.rank, f2.rank)
+    elif f1.periodic_slope < f2.periodic_slope:
         period = f1.period
         increment = f1.increment
         M1 = f1.sup_deviation_from_periodic_slope()
         m2 = f2.inf_deviation_from_periodic_slope()
         rank = max((M1-m2)/(f2.periodic_slope - f1.periodic_slope), f1.rank, f2.rank)
     elif f2.periodic_slope < f1.periodic_slope:
+        if f1.periodic_slope == Fraction(3/4):
+            t = None
         period = f2.period
         increment = f2.increment
         M1 = f2.sup_deviation_from_periodic_slope()
@@ -22,13 +36,13 @@ def min_of_plfs(f1, f2):
         rank = max((M1-m2)/(f1.periodic_slope - f2.periodic_slope), f1.rank, f2.rank)
     else:
         period = lcm(f1.period, f2.period)
-        increment = lcm(f1.increment, f2.increment) * f1.periodic_slope
+        increment = lcm(f1.period, f2.period) * f1.periodic_slope
         rank = max(f1.rank, f2.rank)
 
-    f1_pieces = f1.extend_and_get_all_pieces(rank, period)
-    f2_pieces = f2.extend_and_get_all_pieces(rank, period)
-    f1_elements = decompose(f1_pieces)
-    f2_elements = decompose(f2_pieces)
+    t, p = f1.extend(rank, period).decompose()
+    f1_elements = t + p
+    t, p = f2.extend(rank, period).decompose()
+    f2_elements = t + p
     result_elements = min_of_elements(f1_elements, f2_elements)
     result_pieces = compose(result_elements)
 
@@ -135,7 +149,7 @@ def min_of_elements(e1: List[Element], e2: List[Element]):
 
             # Split segment at spot, keep the right part for the next iteration
             left_segment, right_segment = current_e1.split_at(current_e2.x_start)
-            spot = Spot(current_e2.x_start, min(current_e2.y, current_e1.value_at(current_e1.x_start)))
+            spot = Spot(current_e2.x_start, min(current_e2.y, current_e1.value_at(current_e2.x_start)))
             append(result, left_segment)
             append(result, spot)
             current_e1 = right_segment
