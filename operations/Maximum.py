@@ -1,13 +1,22 @@
-from helpers.util import lcm_fraction as lcm
-from helpers.util import decompose, compose, append
+from util.util import lcm_fraction as lcm
+from util.util import append
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 from model.Element import Element
 from model.Spot import Spot
+import math
 
 
-def max_of_plfs(f1, f2):
+def maximum(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     #Precompute rank
-    if f1.periodic_slope > f2.periodic_slope:
+    if f1.increment == -math.inf:
+        period = f2.period
+        increment = f2.increment
+        rank = max(f1.rank, f2.rank)
+    elif f2.increment == -math.inf:
+        period = f1.period
+        increment = f1.increment
+        rank = max(f1.rank, f2.rank)
+    elif f1.periodic_slope > f2.periodic_slope:
         period = f1.period
         increment = f1.increment
         M1 = f2.sup_deviation_from_periodic_slope()
@@ -21,17 +30,16 @@ def max_of_plfs(f1, f2):
         rank = max((M1-m2)/(f2.periodic_slope - f1.periodic_slope), f1.rank, f2.rank)
     else:
         period = lcm(f1.period, f2.period)
-        increment = lcm(f1.increment, f2.increment) * f1.periodic_slope
+        increment = lcm(f1.period, f2.period) * f1.periodic_slope
         rank = max(f1.rank, f2.rank)
 
-    f1_pieces = f1.extend_and_get_all_pieces(rank, period)
-    f2_pieces = f2.extend_and_get_all_pieces(rank, period)
-    f1_elements = decompose(f1_pieces)
-    f2_elements = decompose(f2_pieces)
+    t, p = f1.extend(rank + period).decompose()
+    f1_elements = t + p
+    t, p = f2.extend(rank + period).decompose()
+    f2_elements = t + p
     result_elements = max_of_elements(f1_elements, f2_elements)
-    result_pieces = compose(result_elements)
 
-    return PiecewiseLinearFunction(result_pieces, rank, period, increment)
+    return PiecewiseLinearFunction.from_elements(result_elements, rank, period, increment)
 
 # Requires lists sorted by x_start, and spots < segments if both start at the same value
 # Elements in the same list may not overlap
@@ -124,7 +132,7 @@ def max_of_elements(e1: [Element], e2: [Element]):
 
             # Split segment at spot, keep the right part for the next iteration
             left_segment, right_segment = current_e1.split_at(current_e2.x_start)
-            spot = Spot(current_e2.x_start, max(current_e2.y, current_e1.value_at(current_e1.x_start)))
+            spot = Spot(current_e2.x_start, max(current_e2.y, current_e1.value_at(current_e2.x_start)))
             result.append(left_segment)
             result.append(spot)
             current_e1 = right_segment

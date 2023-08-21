@@ -7,7 +7,7 @@ sys.path.insert(0, 'C:/Users/Philip/Documents/Retro/NCImplementation/util')
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 from model.Piece import Piece
 from fractions import Fraction
-from helpers.util import lcm_fraction as lcm
+from util.util import lcm_fraction as lcm
 import numpy as np2
 
 elementList = [

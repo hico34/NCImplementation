@@ -1,22 +1,18 @@
-from helpers.util import lcm_fraction as lcm
-from helpers.util import decompose, compose, append
+from util.util import lcm_fraction as lcm
+from util.util import append
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 from model.Element import Element
 from model.Spot import Spot
 from typing import List
-from fractions import Fraction
+import math
 
-
-def min_of_plfs(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
+def minimum(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     # Precompute rank
-    if not f1.is_ultimately_periodic():
-        if f2.is_ultimately_periodic():
-            period = f2.period
-            increment = f2.increment
-            rank = max(f1.rank, f2.rank)
-        else:
-            period = increment = rank = None
-    elif not f2.is_ultimately_periodic():
+    if f1.increment == math.inf:
+        period = f2.period
+        increment = f2.increment
+        rank = max(f1.rank, f2.rank)
+    elif f2.increment == math.inf:
         period = f1.period
         increment = f1.increment
         rank = max(f1.rank, f2.rank)

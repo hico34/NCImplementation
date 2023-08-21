@@ -3,13 +3,7 @@ from fractions import Fraction
 from model.Piece import Piece
 #from PiecewiseLinearFunction import PiecewiseLinearFunction
 
-# TODO Remove
-def index_of_piece_at(pieces: [Piece], x):
-    # TODO Binary Search
-    for i in range(len(pieces)):
-        if pieces[i].x_start <= x < pieces[i].x_end:
-            return i
-    return None
+## TODO Delete Everything
 
 
 # def generate_plf(no_of_elements, max_interval_size, max_slope_size, max_y_segment_size, continuous):
@@ -35,9 +29,6 @@ def index_of_piece_at(pieces: [Piece], x):
 #     period = elements[len(elements)-1].x_end - rank
 #     increment = (elements[len(elements)-1].y_segment + elements[len(elements)-1].slope * elements[len(elements)-1].x_end) - elements[-no_of_period_segments].y_spot
 #     return PiecewiseLinearFunction(elements, rank, period, increment)
-
-def merge_piece_lists(l1, l2):
-    mergedList = []
 
 def randomFraction(a, b):
     den = random.randint(0, 1000)

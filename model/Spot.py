@@ -1,6 +1,5 @@
 from .Element import Element
 
-
 class Spot(Element):
 
     def __init__(self, x, y):

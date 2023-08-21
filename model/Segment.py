@@ -27,3 +27,4 @@ class Segment(Element):
         left_segment = Segment(self.x_start, self.y_segment, x, self.slope)
         right_segment = Segment(x, self.value_at(x), self.x_end, self.slope)
         return left_segment, right_segment
+
