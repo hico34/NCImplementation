@@ -90,7 +90,7 @@ def concave_convolution(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction
     f1_shifted = f1.shift_vertically(-f1_zero)
     f2_shifted = f2.shift_vertically(-f2_zero)
     g_shifted = minimum(f1_shifted, f2_shifted)
-    g = g_shifted.shift(f1_zero + f2_zero)
+    g = g_shifted.shift_vertically(f1_zero + f2_zero)
     return g
 
 
@@ -102,6 +102,10 @@ def transient_convolution(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFuncti
     for e1 in decomposed_f1:
         for e2 in decomposed_f2:
             convolutions = convolutions + element_convolution(e1, e2)
+    from fractions import Fraction
+
+    t = [x for x in convolutions if x[0].x_start == Fraction(87, 11)]
+    t = [x for x in convolutions if x[0].x_end == Fraction(87, 11)]
     lower_envelope = min_of_unsorted_elements(convolutions)
     return PiecewiseLinearFunction.from_elements(lower_envelope, lower_envelope[-1].x_end, 1, math.inf)
 

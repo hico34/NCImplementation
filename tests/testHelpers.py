@@ -45,7 +45,7 @@ rank_concave1 = Fraction(11)
 period_concave1 = Fraction(1)
 increment_concave1 = Fraction(0.5)
 pieces_concave1 = [
-    Piece(Fraction(0), Fraction(0), Fraction(1), Fraction(3), Fraction(4)),
+    Piece(Fraction(0), Fraction(-1), Fraction(1), Fraction(3), Fraction(4)),
     Piece(Fraction(3), Fraction(13), Fraction(13), Fraction(5), Fraction(3.5)),
     Piece(Fraction(5), Fraction(20), Fraction(20), Fraction(8), Fraction(2)),
     Piece(Fraction(8), Fraction(26), Fraction(26), Fraction(11), Fraction(1.25)),
@@ -55,7 +55,7 @@ rank_concave2 = Fraction(10)
 period_concave2 = Fraction(1)
 increment_concave2 = Fraction(1, 5)
 pieces_concave2 = [
-    Piece(Fraction(0), Fraction(0), Fraction(0), Fraction(4), Fraction(6)),
+    Piece(Fraction(0), Fraction(-4), Fraction(0), Fraction(4), Fraction(6)),
     Piece(Fraction(4), Fraction(24), Fraction(24), Fraction(7), Fraction(2)),
     Piece(Fraction(7), Fraction(30), Fraction(30), Fraction(8.5), Fraction(0.75)),
     Piece(Fraction(8.5), Fraction(249, 8), Fraction(249, 8), Fraction(10), Fraction(2, 5)),

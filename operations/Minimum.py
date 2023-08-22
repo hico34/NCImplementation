@@ -5,6 +5,8 @@ from model.Element import Element
 from model.Spot import Spot
 from typing import List
 import math
+from fractions import Fraction
+
 
 def minimum(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     # Precompute rank
@@ -74,6 +76,7 @@ def min_of_elements(e1: List[Element], e2: List[Element]):
             return next(iter2, None)
 
     while not ((current_e1 is None) and (current_e2 is None)):
+
         if current_e1 is None:
             append(result, current_e2)
             current_e2 = next_e2()
@@ -180,6 +183,9 @@ def min_of_elements(e1: List[Element], e2: List[Element]):
                 intersection_x = None
         else:
             intersection_x = None
+
+        if intersection_x == Fraction(87, 11):
+            t = None #TODO
 
         # Determine lower segment at time of overlap_start
         if current_e1.lim_value_at(overlap_start) < current_e2.lim_value_at(overlap_start) or (current_e1.lim_value_at(overlap_start) == current_e2.lim_value_at(overlap_start) and current_e1.slope < current_e2.slope):

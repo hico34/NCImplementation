@@ -164,8 +164,8 @@ class ConvolutionTests(unittest.TestCase):
             self.assertEqual(computed_periodic_values, expected_periodic_values)
 
     def test_2(self):
-        f1 = testHelpers.convexFunction1
-        f2 = testHelpers.convexFunction2
+        f1 = testHelpers.uppFunction2
+        f2 = testHelpers.uppFunction1
         g = convolution(f1, f2)
         print("var f1 = " + f1.gg())
         print("var f2 = " + f2.gg())

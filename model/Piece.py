@@ -40,8 +40,6 @@ class Piece:
         left_pieces = pieces[0:middle_index]
         middle_piece = pieces[middle_index]
         right_pieces = pieces[middle_index+1:]
-        if middle_index == len(pieces) - 1:
-            t = None
         if middle_piece.x_start <= x < middle_piece.x_end:
             return index_offset + middle_index
         # If there are no pieces left to search, return None
@@ -58,5 +56,9 @@ class Piece:
     def __str__(self):
         return "{x_start: " + str(self.x_start) + " , y_spot: " + str(self.y_spot) + " , y_segment: " + str(self.y_segment) + " , slope: " + str(self.slope) + " , x_end: " + str(self.x_end) + "}"
 
+    def __eq__(self, other):
+        if not isinstance(other, Piece):
+            return False
+        return self.x_start == other.x_start and self.y_spot == other.y_spot and self.y_segment == other.y_segment and self.x_end == other.x_end and self.slope == other.slope
 
 

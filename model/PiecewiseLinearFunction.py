@@ -110,6 +110,8 @@ class PiecewiseLinearFunction:
         result_pieces = []
         for p in self.all_pieces:
             shifted_piece = Piece(p.x_start, p.y_spot + y, p.y_segment + y, p.x_end, p.slope)
+            result_pieces.append(shifted_piece)
+        return PiecewiseLinearFunction(result_pieces, self.rank, self.period, self.increment)
 
     # Calculation methods
 
@@ -184,7 +186,6 @@ class PiecewiseLinearFunction:
             if p.slope > current_piece.slope:
                 return False
             if current_piece.lim_value_at(p.x_start) != p.y_spot:
-                t = current_piece.lim_value_at(p.x_start)
                 return False
             if p.y_spot != p.y_segment:
                 return False
@@ -200,6 +201,17 @@ class PiecewiseLinearFunction:
         for e in self.periodic_pieces:
             retStr = retStr + str(e) + "\n"
         return retStr
+
+    def __eq__(self, other):
+        if not isinstance(other, PiecewiseLinearFunction):
+            return False
+        if len(self.all_pieces) != len(other.all_pieces):
+            return False
+        for i in range(len(self.all_pieces)):
+            if self.all_pieces[i] != other.all_pieces[i]:
+                return False
+        return self.rank == other.rank and self.period == other.period and self.increment == other.increment
+
 
     #TODO Remove
     def gg(self):

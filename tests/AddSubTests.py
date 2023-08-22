@@ -1,6 +1,8 @@
 import unittest
 from operations.Addition import add_functions
 from operations.Subtraction import subtract_functions
+from operations.Minimum import minimum
+from operations.Maximum import maximum
 import tests.testHelpers as testHelpers
 import itertools
 
