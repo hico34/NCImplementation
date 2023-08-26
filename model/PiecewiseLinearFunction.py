@@ -140,7 +140,7 @@ class PiecewiseLinearFunction:
     def sup_deviation_from_periodic_slope(self):
         sup = -math.inf
         for e in self.periodic_pieces:
-            sup = max(sup, e.y_spot - self.periodic_slope * e.x_start) #TODO Correct?
+            sup = max(sup, e.y_spot - self.periodic_slope * e.x_start)
             sup = max(sup, e.y_segment - self.periodic_slope * e.x_start)
             sup = max(sup, e.lim_value_at(e.x_end) - self.periodic_slope * e.x_end)
         return sup
@@ -158,7 +158,6 @@ class PiecewiseLinearFunction:
         no_discontinuities = self.periodic_pieces[0].y_segment + self.increment == self.periodic_pieces[0].lim_value_at(self.periodic_pieces[0].x_end)
         return len(self.periodic_pieces) == 1 and no_discontinuities
 
-    # TODO Mention
     def is_convex(self):
         current_piece = self.all_pieces[0]
         if current_piece.y_spot < current_piece.y_segment:
@@ -175,7 +174,6 @@ class PiecewiseLinearFunction:
             current_piece = p
         return True
 
-    # TODO Mention
     def is_concave(self):
         current_piece = self.all_pieces[0]
         if current_piece.y_spot > current_piece.y_segment:
@@ -193,14 +191,14 @@ class PiecewiseLinearFunction:
         return True
 
     def __str__(self):
-        retStr = "{rank: " + str(self.rank) + ", period: " + str(self.period) + ", increment: " + str(
+        ret_str = "{rank: " + str(self.rank) + ", period: " + str(self.period) + ", increment: " + str(
             self.increment) + "\n" + "TransEl:\n"
         for e in self.transient_pieces:
-            retStr = retStr + str(e) + "\n"
-        retStr = retStr + "PerEl:\n"
+            ret_str = ret_str + str(e) + "\n"
+        ret_str = ret_str + "PerEl:\n"
         for e in self.periodic_pieces:
-            retStr = retStr + str(e) + "\n"
-        return retStr
+            ret_str = ret_str + str(e) + "\n"
+        return ret_str
 
     def __eq__(self, other):
         if not isinstance(other, PiecewiseLinearFunction):

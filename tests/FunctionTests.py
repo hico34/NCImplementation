@@ -18,7 +18,7 @@ class Test(unittest.TestCase):
         for e in pieces:
             condlist.append(x == e.x_start)
             funclist.append(e.y_spot)
-            condlist.append(np.logical_and((e.x_start < x),(x < e.x_end)))
+            condlist.append(np.logical_and((e.x_start < x), (x < e.x_end)))
             funclist.append(lambda x, e=e: self.numpy_piece_value_at(e, x))
 
         return np.piecewise(x, condlist, funclist)
@@ -51,7 +51,6 @@ class Test(unittest.TestCase):
                 numpy_periodic_x_values = np.array(periodic_x_values)
                 expected_periodic_values = self.numpy_values_at(f, numpy_periodic_x_values)
                 self.assertTrue(np.array_equal(computed_periodic_values, expected_periodic_values))
-
 
     def test_is_concave(self):
         self.assertTrue(testHelpers.concaveFunction1.is_concave())
@@ -88,6 +87,7 @@ class Test(unittest.TestCase):
         self.assertFalse(testHelpers.continuousFunction2.is_ultimately_affine())
         self.assertFalse(testHelpers.uppFunction1.is_ultimately_affine())
         self.assertFalse(testHelpers.uppFunction2.is_ultimately_affine())
+
 
 if __name__ == '__main__':
     unittest.main()

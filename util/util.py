@@ -10,7 +10,7 @@ def lcm_fraction(fr1, fr2):
     den = gcd(fr1.denominator, fr2.denominator)
     return Fraction(num, den)
 
-# TODO mention
+
 # If possible, merge segments to avoid unnecessary elements
 def append(list: [Element], e: Element):
     if len(list) >= 2 and e.is_segment:

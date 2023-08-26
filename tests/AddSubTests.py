@@ -1,10 +1,9 @@
 import unittest
 from operations.Addition import add_functions
 from operations.Subtraction import subtract_functions
-from operations.Minimum import minimum
-from operations.Maximum import maximum
 import tests.testHelpers as testHelpers
 import itertools
+
 
 class Test(unittest.TestCase):
 
@@ -75,7 +74,6 @@ class Test(unittest.TestCase):
                 computed_periodic_values.append(g.value_at(x))
 
             self.assertEqual(computed_periodic_values, expected_periodic_values)
-
 
 
 if __name__ == '__main__':

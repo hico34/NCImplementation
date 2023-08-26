@@ -5,6 +5,7 @@ from util.util import append
 from model.Spot import Spot
 from model.Segment import Segment
 
+
 def subtract_functions(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     rank = max(f1.rank, f2.rank)
     period = lcm(f1.period, f2.period)
@@ -18,6 +19,7 @@ def subtract_functions(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction)
     result_elements = subtract_elements(f1_elements, f2_elements)
 
     return PiecewiseLinearFunction.from_elements(result_elements, rank, period, increment)
+
 
 # Requires lists sorted by x_start, and spots < segments if both start at the same value
 # Elements in the same list may not overlap
@@ -70,7 +72,6 @@ def subtract_elements(e1: [Element], e2: [Element]):
             continue
 
         # Two segments (Note: There cannot be one spot and one segment in the same iteration)
-        # TODO PRove
 
         # Segments are guaranteed to start at the same time
         x_start = current_e1.x_start

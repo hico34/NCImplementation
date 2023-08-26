@@ -5,7 +5,6 @@ from model.Element import Element
 from model.Spot import Spot
 from typing import List
 import math
-from fractions import Fraction
 
 
 def minimum(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
@@ -175,7 +174,6 @@ def min_of_elements(e1: List[Element], e2: List[Element]):
         overlap_end = min(current_e1.x_end, current_e2.x_end)
         # Compute intersection within overlap
         if current_e1.slope != current_e2.slope:
-            # TODO Prove Correctness
             intersection_x = (current_e2.y_segment - current_e2.slope * current_e2.x_start - current_e1.y_segment + current_e1.slope*current_e1.x_start) / (current_e1.slope - current_e2.slope)
             if overlap_start < intersection_x < overlap_end:
                 intersection_y = current_e1.value_at(intersection_x)
@@ -183,9 +181,6 @@ def min_of_elements(e1: List[Element], e2: List[Element]):
                 intersection_x = None
         else:
             intersection_x = None
-
-        if intersection_x == Fraction(87, 11):
-            t = None #TODO
 
         # Determine lower segment at time of overlap_start
         if current_e1.lim_value_at(overlap_start) < current_e2.lim_value_at(overlap_start) or (current_e1.lim_value_at(overlap_start) == current_e2.lim_value_at(overlap_start) and current_e1.slope < current_e2.slope):

@@ -2,6 +2,7 @@ from fractions import Fraction
 from model.Piece import Piece
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 
+
 # Computes all x values where a segment starts, and one x value in the middle of each segment
 def relevant_x_values(f: PiecewiseLinearFunction):
     transient_x_values = []
@@ -14,8 +15,6 @@ def relevant_x_values(f: PiecewiseLinearFunction):
             periodic_x_values.append(e.x_start)
             periodic_x_values.append(x_within_segment)
     return transient_x_values, periodic_x_values
-
-
 
 
 rank_continuous1 = Fraction(9.5)
@@ -31,14 +30,14 @@ pieces_continuous1 = [
 ]
 rank_continuous2 = Fraction(11)
 period_continuous2 = Fraction(10)
-increment_continuous2 = Fraction(112, 5)
+increment_continuous2 = Fraction(24.5)
 pieces_continuous2 = [
     Piece(Fraction(0), Fraction(1), Fraction(1), Fraction(2), Fraction(2)),
     Piece(Fraction(2), Fraction(4), Fraction(4), Fraction(7), Fraction(1.5)),
-    Piece(Fraction(7), Fraction(11.5), Fraction(11.5), Fraction(10), Fraction(0.1)),
-    Piece(Fraction(10), Fraction(59, 5), Fraction(59, 5), Fraction(11), Fraction(1)),
-    Piece(Fraction(11), Fraction(64, 5), Fraction(64, 5), Fraction(14), Fraction(0)),
-    Piece(Fraction(14), Fraction(64, 5), Fraction(64, 5), Fraction(21), Fraction(3.2))
+    Piece(Fraction(7), Fraction(11.5), Fraction(11.5), Fraction(10), Fraction(0.25)),
+    Piece(Fraction(10), Fraction(12.25), Fraction(12.25), Fraction(11), Fraction(1)),
+    Piece(Fraction(11), Fraction(13.25), Fraction(13.25), Fraction(14), Fraction(0)),
+    Piece(Fraction(14), Fraction(37.75), Fraction(37.75), Fraction(21), Fraction(3.5))
 ]
 
 rank_concave1 = Fraction(11)

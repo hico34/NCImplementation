@@ -70,7 +70,6 @@ def add_elements(e1: [Element], e2: [Element]):
             continue
 
         # Two segments (Note: There cannot be one spot and one segment in the same iteration)
-        # TODO PRove
 
         # Segments are guaranteed to start at the same time
         x_start = current_e1.x_start

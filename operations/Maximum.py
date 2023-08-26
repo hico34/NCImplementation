@@ -4,6 +4,7 @@ from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 from model.Element import Element
 from model.Spot import Spot
 import math
+from typing import List
 
 
 def maximum(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
@@ -75,35 +76,45 @@ def max_of_elements(e1: [Element], e2: [Element]):
 
     while not ((current_e1 is None) and (current_e2 is None)):
         if current_e1 is None:
-            result.append(current_e2)
+            append(result, current_e2)
             current_e2 = next_e2()
             continue
         if current_e2 is None:
-            result.append(current_e1)
+            append(result, current_e1)
             current_e1 = next_e1()
             continue
 
         # No overlap
         if current_e1.x_end < current_e2.x_start:
-            result.append(current_e1)
+            append(result, current_e1)
             current_e1 = next_e1()
             continue
         elif current_e2.x_end < current_e1.x_start:
-            result.append(current_e2)
+            append(result, current_e2)
             current_e2 = next_e2()
             continue
-        elif current_e1.is_segment and current_e1.x_end == current_e2.x_start:
-            result.append(current_e1)
-            current_e1 = next_e1()
-            continue
-        elif current_e2.is_segment and current_e2.x_end == current_e1.x_start:
-            result.append(current_e2)
-            current_e2 = next_e2()
-            continue
+        elif current_e1.is_segment:
+            if current_e1.x_end == current_e2.x_start:
+                append(result, current_e1)
+                current_e1 = next_e1()
+                continue
+            elif current_e1.x_start == current_e2.x_end:
+                append(result, current_e2)
+                current_e2 = next_e2()
+                continue
+        elif current_e2.is_segment:
+            if current_e2.x_end == current_e1.x_start:
+                append(result, current_e2)
+                current_e2 = next_e2()
+                continue
+            elif current_e2.x_start == current_e1.x_end:
+                append(result, current_e1)
+                current_e1 = next_e1()
+                continue
 
         # Two spots
         if current_e1.is_spot and current_e2.is_spot:
-            result.append(Spot(current_e1.x_start, max(current_e1.y, current_e2.y)))
+            append(result, Spot(current_e1.x_start, max(current_e1.y, current_e2.y)))
             current_e1 = next_e1()
             current_e2 = next_e2()
             continue
@@ -118,8 +129,8 @@ def max_of_elements(e1: [Element], e2: [Element]):
             # Split segment at spot, keep the right part for the next iteration
             left_segment, right_segment = current_e2.split_at(current_e1.x_start)
             spot = Spot(current_e1.x_start, max(current_e1.y, current_e2.value_at(current_e1.x_start)))
-            result.append(left_segment)
-            result.append(spot)
+            append(result, left_segment)
+            append(result, spot)
             current_e1 = next_e1()
             current_e2 = right_segment
             continue
@@ -133,8 +144,8 @@ def max_of_elements(e1: [Element], e2: [Element]):
             # Split segment at spot, keep the right part for the next iteration
             left_segment, right_segment = current_e1.split_at(current_e2.x_start)
             spot = Spot(current_e2.x_start, max(current_e2.y, current_e1.value_at(current_e2.x_start)))
-            result.append(left_segment)
-            result.append(spot)
+            append(result, left_segment)
+            append(result, spot)
             current_e1 = right_segment
             current_e2 = next_e2()
             continue
@@ -146,14 +157,14 @@ def max_of_elements(e1: [Element], e2: [Element]):
             left_segment, right_segment = current_e1.split_at(current_e2.x_start)
             spot = Spot(current_e2.x_start, current_e1.value_at(current_e2.x_start))
             append(result, left_segment)
-            result.append(spot)
+            append(result, spot)
             current_e1 = right_segment
             continue
         elif current_e2.x_start < current_e1.x_start:
             left_segment, right_segment = current_e2.split_at(current_e1.x_start)
             spot = Spot(current_e1.x_start, current_e2.value_at(current_e1.x_start))
             append(result, left_segment)
-            result.append(spot)
+            append(result, spot)
             current_e2 = right_segment
             continue
 
@@ -162,7 +173,6 @@ def max_of_elements(e1: [Element], e2: [Element]):
         overlap_end = min(current_e1.x_end, current_e2.x_end)
         # Compute intersection within overlap
         if current_e1.slope != current_e2.slope:
-            # TODO Prove Correctness
             intersection_x = (current_e2.y_segment - current_e2.slope * current_e2.x_start - current_e1.y_segment + current_e1.slope*current_e1.x_start) / (current_e1.slope - current_e2.slope)
             if overlap_start < intersection_x < overlap_end:
                 intersection_y = current_e1.value_at(intersection_x)
@@ -189,7 +199,7 @@ def max_of_elements(e1: [Element], e2: [Element]):
             spot = Spot(intersection_x, intersection_y)
             left_upper, right_upper = upper_e.split_at(intersection_x)
             append(result, left_upper)
-            result.append(spot)
+            append(result, spot)
             if lower == 1:
                 current_e1 = right_lower
                 current_e2 = right_upper
@@ -238,3 +248,16 @@ def max_of_elements(e1: [Element], e2: [Element]):
             continue
 
     return result
+
+# Divide and conquer approach to computing the minimum of a set of unsorted elements
+# Expects a list of lists of elements (containing a single Element when not calling recursively)
+def max_of_unsorted_elements(elements: List[List[Element]]):
+    if len(elements) == 1:
+        return elements[0]
+    elif len(elements) == 2:
+        return max_of_elements(elements[0], elements[1])
+    else:
+        split_i = len(elements) // 2
+        left = max_of_unsorted_elements(elements[:split_i])
+        right = max_of_unsorted_elements(elements[split_i:])
+        return max_of_elements(left, right)
