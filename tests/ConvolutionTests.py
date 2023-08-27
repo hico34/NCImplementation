@@ -158,14 +158,6 @@ class ConvolutionTests(unittest.TestCase):
         self.assertEqual(computed_values, expected_values)
 
 
-    def test_4(self):
-        f1 = testHelpers.convexFunction1
-        f2 = testHelpers.convexFunction2
-        gMax = maxplus_convolution(f1, f2)
-        print("var f1 = " + f1.gg())
-        print("var f2 = " + f2.gg())
-        #print("var gMin = " + gMin.gg())
-        print("var gMax = " + gMax.gg())
 
 if __name__ == '__main__':
     unittest.main()

@@ -19,7 +19,7 @@ class PiecewiseLinearFunction:
             self.increment = Fraction(increment)
         else:
             self.increment = increment
-        self.periodic_slope = increment / period
+        self.periodic_slope = self.increment / self.period
         self.all_pieces = self.transient_pieces + self.periodic_pieces
 
     @staticmethod
