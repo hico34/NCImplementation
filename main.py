@@ -6,39 +6,22 @@ sys.path.insert(0, 'C:/Users/Philip/Documents/Retro/NCImplementation/util')
 
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 from model.Piece import Piece
-from fractions import Fraction
-from util.util import lcm_fraction as lcm
-import numpy as np2
-
-elementList = [
-    Piece(Fraction(0), Fraction(0), Fraction(0), Fraction(3), Fraction(.5)),
-    Piece(Fraction(3), Fraction(1.5), Fraction(1.5), Fraction(5), Fraction(1)),
-    Piece(Fraction(5), Fraction(7), Fraction(3.5), Fraction(8), Fraction(1.5)),
-    Piece(Fraction(8), Fraction(10.5), Fraction(10.5), Fraction(9), Fraction(1)),
-    Piece(Fraction(9), Fraction(11.5), Fraction(11.5), Fraction(11), Fraction(2))
-]
+from operations.Maximum import maximum
+from operations.Minimum import minimum
+from operations.Addition import add_functions
+from operations.Subtraction import subtract_functions
+from operations.Convolution import convolution
+from operations.MaxPlusConvolution import maxplus_convolution
 
 
+f1_example = PiecewiseLinearFunction([
+    Piece(0, 0, 0, 1, 1),
+    Piece(1, 1, 1, 2, 0),
+    Piece(2, 1, 1, 4, 2)
+], 1, 3, 4)
 
-elementList2 = [
-    Piece(Fraction(0), Fraction(0), Fraction(0), Fraction(3), Fraction(.5)),
-    Piece(Fraction(3), Fraction(1.5), Fraction(1.5), Fraction(5), Fraction(1)),
-    Piece(Fraction(5), Fraction(7), Fraction(3.5), Fraction(8), Fraction(1.5)),
-    Piece(Fraction(8), Fraction(10.5), Fraction(10.5), Fraction(10), Fraction(2)),
-    Piece(Fraction(10), Fraction(12.5), Fraction(11.5), Fraction(14), Fraction(4))
-]
-
-plf = PiecewiseLinearFunction(elementList, Fraction(8), Fraction(3), Fraction(5))
-plf2 = PiecewiseLinearFunction(elementList2, Fraction(8), Fraction(6), Fraction(20))
-
-fr1 = Fraction(4, 2)
-fr2 = Fraction(7,2)
-print(lcm(fr1, fr2))
-
-#result = min_of_plfs(plf, plf2)
-print("Result: ")
-#print(result)
-
-x = np2.array([Fraction(0), Fraction(1), Fraction(3), Fraction(4), Fraction(5), Fraction(20)])
-print(plf.numpy_values_at(x))
-print([plf.value_at(Fraction(0)), plf.value_at(Fraction(1)), plf.value_at(Fraction(3)), plf.value_at(Fraction(4)), plf.value_at(Fraction(5)), plf.value_at(Fraction(20))])
+f2_example = PiecewiseLinearFunction([
+    Piece(0, 1, 1, 2, 0),
+    Piece(2, 1, 1, 4, 1),
+    Piece(4, 3, 3, 5, 0)
+])
