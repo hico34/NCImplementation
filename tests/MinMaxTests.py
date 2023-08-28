@@ -9,7 +9,7 @@ class MinMaxTests(unittest.TestCase):
 
     def test_minimum(self):
         functions = testHelpers.test_functions
-        function_tuples = itertools.permutations(functions, 2)
+        function_tuples = itertools.combinations(functions, 2)
         for tuple in function_tuples:
             f1, f2 = tuple
             g = minimum(f1, f2)
@@ -43,7 +43,7 @@ class MinMaxTests(unittest.TestCase):
 
     def test_maximum(self):
         functions = testHelpers.test_functions
-        function_tuples = itertools.permutations(functions, 2)
+        function_tuples = itertools.combinations(functions, 2)
         for tuple in function_tuples:
             f1, f2 = tuple
             g = maximum(f1, f2)

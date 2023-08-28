@@ -137,7 +137,7 @@ def max_of_elements(e1: [Element], e2: [Element]):
 
         elif current_e2.is_spot and current_e1.is_segment:
             # If the spot is not part of the upper envelope, we can disregard it and continue with next iteration
-            if current_e1.value_at(current_e2.x_start) <= current_e2.y:
+            if current_e1.value_at(current_e2.x_start) >= current_e2.y:
                 current_e2 = next_e2()
                 continue
 

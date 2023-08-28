@@ -34,15 +34,3 @@ def append(list: [Element], e: Element):
         list[-1] = merged_segment
     else:
         list.append(e)
-
-# todo delete
-def segments_to_string(segments):
-    retStr = ""
-    for t in segments:
-        s = t[0]
-        if s.is_spot:
-            continue
-        retStr = retStr + "\t \\addplot[dashed] \n \t \t coordinates {"
-        retStr = retStr + "({}, {}) ({}, {})".format(s.x_start, s.y_segment, s.x_end, s.lim_value_at(s.x_end))
-        retStr = retStr + "}; \n"
-    return retStr

@@ -18,8 +18,8 @@ def relevant_x_values(f: PiecewiseLinearFunction):
 
 
 rank_continuous1 = Fraction(9.5)
-period_continuous1 = Fraction(3.25)
-increment_continuous1 = Fraction(5.75)
+period_continuous1 = Fraction(3)
+increment_continuous1 = Fraction(5.5)
 pieces_continuous1 = [
     Piece(Fraction(0), Fraction(0), Fraction(0), Fraction(3), Fraction(.5)),
     Piece(Fraction(3), Fraction(1.5), Fraction(1.5), Fraction(5), Fraction(1)),

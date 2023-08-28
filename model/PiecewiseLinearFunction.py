@@ -191,12 +191,9 @@ class PiecewiseLinearFunction:
         return True
 
     def __str__(self):
-        ret_str = "{rank: " + str(self.rank) + ", period: " + str(self.period) + ", increment: " + str(
-            self.increment) + "\n" + "TransEl:\n"
-        for e in self.transient_pieces:
-            ret_str = ret_str + str(e) + "\n"
-        ret_str = ret_str + "PerEl:\n"
-        for e in self.periodic_pieces:
+        ret_str = "rank: " + str(self.rank) + ", period: " + str(self.period) + ", increment: " + str(
+            self.increment) + "\n" + "Pieces:\n"
+        for e in self.all_pieces:
             ret_str = ret_str + str(e) + "\n"
         return ret_str
 
@@ -209,19 +206,3 @@ class PiecewiseLinearFunction:
             if self.all_pieces[i] != other.all_pieces[i]:
                 return False
         return self.rank == other.rank and self.period == other.period and self.increment == other.increment
-
-
-    #TODO Remove
-    def gg(self):
-        def fract(f):
-            return "new Rational({},{})".format(f.numerator, f.denominator)
-
-        result_string = "new Curve( \n baseSequence: new Sequence(new Element[] \n { \n"
-
-        for p in self.all_pieces:
-            result_string = result_string + "new Point( {},{} ), \n".format(fract(p.x_start), fract(p.y_spot))
-            result_string = result_string + "new Segment( {}, {}, {}, {} ), \n".format(fract(p.x_start), fract(p.x_end), fract(p.y_segment), fract(p.slope))
-        result_string = result_string + "}"
-        result_string = result_string + "), \n pseudoPeriodStart: {} , \n pseudoPeriodLength: {}".format(fract(self.rank), fract(self.period))
-        result_string = result_string + ", \n pseudoPeriodHeight: {}\n);".format(fract(self.increment))
-        return result_string

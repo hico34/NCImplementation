@@ -1,4 +1,4 @@
-from util.util import lcm_fraction as lcm, segments_to_string
+from util.util import lcm_fraction as lcm
 from model.PiecewiseLinearFunction import PiecewiseLinearFunction
 from model.Element import Element
 from model.Spot import Spot
@@ -104,8 +104,6 @@ def transient_convolution(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFuncti
             convolutions = convolutions + element_convolution(e1, e2)
 
     lower_envelope = min_of_unsorted_elements(convolutions)
-    print("tt")
-    print(segments_to_string(convolutions))
     return PiecewiseLinearFunction.from_elements(lower_envelope, lower_envelope[-1].x_end, 1, math.inf)
 
 
@@ -123,8 +121,6 @@ def periodic_convolution(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunctio
                 convolutions = convolutions + element_convolution(e1, e2)
 
     lower_envelope = min_of_unsorted_elements(convolutions)
-    print("pp")
-    print(segments_to_string(convolutions))
     return PiecewiseLinearFunction.from_elements(lower_envelope, f1.rank + f2.rank + period, period, increment)
 
 
@@ -139,8 +135,6 @@ def transient_periodic_convolution(f_transient: PiecewiseLinearFunction, f_perio
             convolutions = convolutions + element_convolution(e1, e2)
 
     lower_envelope = min_of_unsorted_elements(convolutions)
-    print("tp")
-    print(segments_to_string(convolutions))
     return PiecewiseLinearFunction.from_elements(lower_envelope, f_transient.rank + f_periodic.rank, f_periodic.period, f_periodic.increment)
 
 

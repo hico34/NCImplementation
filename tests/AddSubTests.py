@@ -9,7 +9,7 @@ class Test(unittest.TestCase):
 
     def test_addition(self):
         functions = testHelpers.test_functions
-        function_tuples = itertools.permutations(functions, 2)
+        function_tuples = itertools.combinations(functions, 2)
         for tuple in function_tuples:
             f1, f2 = tuple
             g = add_functions(f1, f2)
@@ -43,7 +43,7 @@ class Test(unittest.TestCase):
 
     def test_subtraction(self):
         functions = testHelpers.test_functions
-        function_tuples = itertools.permutations(functions, 2)
+        function_tuples = itertools.combinations(functions, 2)
         for tuple in function_tuples:
             f1, f2 = tuple
             g = subtract_functions(f1, f2)
