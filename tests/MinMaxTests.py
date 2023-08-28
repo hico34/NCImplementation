@@ -74,3 +74,6 @@ class MinMaxTests(unittest.TestCase):
                 computed_periodic_values.append(g.value_at(x))
 
             self.assertEqual(computed_periodic_values, expected_periodic_values)
+
+if __name__ == '__main__':
+    unittest.main()

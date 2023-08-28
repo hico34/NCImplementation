@@ -49,8 +49,8 @@ def min_of_elements(e1: List[Element], e2: List[Element]):
     iter1 = iter(e1)
     iter2 = iter(e2)
 
-    current_e1: Element = next(iter1, None)
-    current_e2: Element = next(iter2, None)
+    current_e1 = next(iter1, None)
+    current_e2 = next(iter2, None)
 
     leftover_e1 = None
     leftover_e2 = None

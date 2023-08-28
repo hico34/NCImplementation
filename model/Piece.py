@@ -2,6 +2,7 @@ from .Spot import Spot
 from .Segment import Segment
 from fractions import Fraction
 
+
 class Piece:
     def __init__(self, x_start, y_spot, y_segment, x_end, slope):
         self.x_start = Fraction(x_start)
@@ -35,7 +36,7 @@ class Piece:
     # Looks for the index of the piece defined on x via binary search
     # index_offset should always be 0 when not called recursively
     @staticmethod
-    def index_of_piece_at(pieces, x, index_offset = 0):
+    def index_of_piece_at(pieces, x, index_offset=0):
         middle_index = len(pieces) // 2
         left_pieces = pieces[0:middle_index]
         middle_piece = pieces[middle_index]
@@ -52,7 +53,6 @@ class Piece:
                 return None
             return Piece.index_of_piece_at(right_pieces, x, index_offset + middle_index + 1)
 
-
     def __str__(self):
         return "{x_start: " + str(self.x_start) + " , y_spot: " + str(self.y_spot) + " , y_segment: " + str(self.y_segment) + " , slope: " + str(self.slope) + " , x_end: " + str(self.x_end) + "}"
 
@@ -60,5 +60,3 @@ class Piece:
         if not isinstance(other, Piece):
             return False
         return self.x_start == other.x_start and self.y_spot == other.y_spot and self.y_segment == other.y_segment and self.x_end == other.x_end and self.slope == other.slope
-
-

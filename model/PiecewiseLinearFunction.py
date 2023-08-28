@@ -22,6 +22,8 @@ class PiecewiseLinearFunction:
         self.periodic_slope = self.increment / self.period
         self.all_pieces = self.transient_pieces + self.periodic_pieces
 
+    # Constructs function from a list of elements.
+    # List must alternate between spots and segments, with a spot at the start of each segment.
     @staticmethod
     def from_elements(elements, rank, period, increment):
         pieces = []
@@ -76,7 +78,7 @@ class PiecewiseLinearFunction:
             decomposed_periodic.append(segment)
         return decomposed_transient, decomposed_periodic
 
-    # Splits the pieces into transient and periodic parts at rank T,
+    # Splits the list of pieces into transient and periodic parts at rank T,
     # and cuts off pieces defined on x > T + d
     def split_pieces(self, pieces, rank, period):
         split_index = Piece.index_of_piece_at(pieces, rank)

@@ -29,7 +29,7 @@ class ConvolutionTests(unittest.TestCase):
             periodic_x_values = periodic_x_values + [x+g.period * i for x in periodic_part_x_values]
         for x in periodic_x_values:
             if f.value_at(x) != g.value_at(x):
-                print("Inequality at ({}, {} != {}".format(x, f.value_at(x), g.value_at(x)))
+                print("Inequality at ({}, {} != {})".format(x, f.value_at(x), g.value_at(x)))
                 return False
 
         return True
@@ -69,8 +69,7 @@ class ConvolutionTests(unittest.TestCase):
         function_tuples = itertools.combinations(functions, 2)
         for tuple in function_tuples:
             f1, f2 = tuple
-            print(f1.rank, f1.period, f1.increment)
-            print(f2.rank, f2.period, f2.increment)
+
             g1 = maxplus_convolution(f1, f2)
             g2 = maxplus_convolution(f2, f1)
             self.assertTrue(self.function_equality(g1, g2))

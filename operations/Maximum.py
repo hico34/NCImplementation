@@ -8,7 +8,7 @@ from typing import List
 
 
 def maximum(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
-    #Precompute rank
+    # Precompute rank
     if f1.increment == -math.inf:
         period = f2.period
         increment = f2.increment
@@ -42,6 +42,7 @@ def maximum(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
 
     return PiecewiseLinearFunction.from_elements(result_elements, rank, period, increment)
 
+
 # Requires lists sorted by x_start, and spots < segments if both start at the same value
 # Elements in the same list may not overlap
 def max_of_elements(e1: [Element], e2: [Element]):
@@ -49,8 +50,8 @@ def max_of_elements(e1: [Element], e2: [Element]):
     iter1 = iter(e1)
     iter2 = iter(e2)
 
-    current_e1: Element = next(iter1, None)
-    current_e2: Element = next(iter2, None)
+    current_e1 = next(iter1, None)
+    current_e2 = next(iter2, None)
 
     leftover_e1 = None
     leftover_e2 = None
@@ -248,6 +249,7 @@ def max_of_elements(e1: [Element], e2: [Element]):
             continue
 
     return result
+
 
 # Divide and conquer approach to computing the minimum of a set of unsorted elements
 # Expects a list of lists of elements (containing a single Element when not calling recursively)

@@ -5,6 +5,7 @@ from util.util import append
 from model.Spot import Spot
 from model.Segment import Segment
 
+
 def add_functions(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
     rank = max(f1.rank, f2.rank)
     period = lcm(f1.period, f2.period)
@@ -19,6 +20,7 @@ def add_functions(f1: PiecewiseLinearFunction, f2: PiecewiseLinearFunction):
 
     return PiecewiseLinearFunction.from_elements(result_elements, rank, period, increment)
 
+
 # Requires lists sorted by x_start, and spots < segments if both start at the same value
 # Elements in the same list may not overlap
 # Elements must be defined from x = 0 to x_end of the last element, but one list may have a later end
@@ -27,8 +29,8 @@ def add_elements(e1: [Element], e2: [Element]):
     iter1 = iter(e1)
     iter2 = iter(e2)
 
-    current_e1: Element = next(iter1, None)
-    current_e2: Element = next(iter2, None)
+    current_e1 = next(iter1, None)
+    current_e2 = next(iter2, None)
 
     leftover_e1 = None
     leftover_e2 = None
@@ -109,6 +111,3 @@ def add_elements(e1: [Element], e2: [Element]):
             continue
 
     return result
-
-
-
